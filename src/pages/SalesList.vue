@@ -362,7 +362,6 @@
   border-radius: 8px 8px 0px 0px;
   background-color: #FFFFFF;
   padding: 20px 35px;
-  margin-top: 15px;
   margin-left: 5px;
   margin-right: 33px;
 }
@@ -558,6 +557,7 @@ td {
   margin-top: 15px;
   margin-left: 5px;
   margin-right: 33px;
+  margin-bottom: 15px;
 }
 
 </style>

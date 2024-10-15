@@ -38,526 +38,185 @@
   <v-dialog v-model="props.show" @keydown.esc="closeDialog">
     <div class="sales-container">
       <div class="left-container">
-        <span class="title">
-          신규등록
-        </span>
-        <div class="step-container">
-          <div
-            v-for="(step, index) of steps"
-            :key="index"
-            class="one-step-container"
-          >
-            <div
-              v-if="index !== 0"
-              class="vertical-dotted-line"
-            />
-            <div v-if="index <= salesData.s_step">
-              <v-icon
-                color="#003366"
-                icon="mdi-check-circle"
-                size="large"
-              />
-              <br>
-              <span class="current-text">{{ step.text }}</span>
-              <br>
-              <span class="desc">{{ step.desc }}</span>
-            </div>
-            <div v-else>
-              <v-icon
-                color="#999999"
-                icon="mdi-check-circle-outline"
-                size="large"
-              />
-              <br>
-              <span class="next-text">{{ step.text }}</span>
-              <br>
-              <span class="desc">{{ step.desc }}</span>
-            </div>
-          </div>
-        </div>
+        <v-row>
+          <v-col align="center">
+            <v-icon 
+            icon="mdi-chevron-left-circle-outline"
+            color="#999999"
+            size="x-large"
+            class="icon-arrow">
+            </v-icon>
+          </v-col>
+          <v-col align="center">
+            <img class="avatar-img" src="@/assets/avatar.png" />
+          </v-col>
+          <v-col align="center">
+            <v-icon 
+            icon="mdi-chevron-right-circle-outline"
+            color="#999999"
+            size="x-large"
+            class="icon-arrow">
+            </v-icon>
+          </v-col>
+        </v-row>
+        <v-row dense justify="center" style="margin-top: 20%;">
+          <v-col align="center">
+            <span class="dialog-title">
+              신규 사건 등록
+            </span>
+          </v-col>
+        </v-row>
+        <v-row dense justify="center">
+          <v-col align="center">
+            <span class="dialog-content">
+              신규 사건을 등록합니다.
+            </span>
+          </v-col>
+        </v-row>
+        <v-row justify="center" no-gutters>
+          <v-col align="center">
+            <span class="dialog-content">
+              채무자의 기본정보를 입력해주세요
+            </span>
+          </v-col>
+        </v-row>
+
       </div>
       <div class="right-container">
-        <div class="close-btn-container">
-          <button class="close-btn" @click="closeDialog">
-            <i class="mdi mdi-close" />
-          </button>
-        </div>
-        <!-- 고객 정보 -->
-        <div class="form-container">
-          <div class="info-title-container" style="margin-top: 20px;">
-            <span class="title">고객 정보</span>
-            <span class="info-code">고객 코드</span>
-            <span class="info-code-value">{{ customerInfo.code? customerInfo.code: '확인되지 않음' }}</span>
-          </div>
-          <table class="table-form">
-            <thead>
-              <th>고객사명<span style="font-size: 14px; color: #EF0040;">*</span></th>
-              <th>담당자명</th>
-              <th>연락처</th>
-              <th>이메일</th>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <input v-model="salesData.c_name" class="input-text" placeholder="고객사명 입력">
-                </td>
-                <td>
-                  <input v-model="salesData.c_contact" class="input-text" placeholder="담당자명 입력">
-                </td>
-                <td>
-                  <input v-model="salesData.c_phone" class="input-text" placeholder="010-1234-5678">
-                </td>
-                <td>
-                  <input v-model="salesData.c_email" class="input-text" placeholder="example@salser.com">
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <!-- 고객 정보 상세 설정 -->
-          <div v-if="showCustomerDetail">
-            <table class="table-form">
-              <thead>
-                <th style="width: 440px;">사업자 등록 번호<span style="font-size: 14px; color: #EF0040;">*</span></th>
-                <th>상호(법인명)<span style="font-size: 14px; color: #EF0040;">*</span></th>
-                <th>대표자명<span style="font-size: 14px; color: #EF0040;">*</span></th>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <input v-model="customerInfo.bnum" class="input-text" placeholder="123-45-67890" style="width: 430px;">
-                  </td>
-                  <td>
-                    <input v-model="customerInfo.name" class="input-text" placeholder="상호 입력">
-                  </td>
-                  <td>
-                    <input v-model="customerInfo.ceo" class="input-text" placeholder="대표자명 입력">
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <table class="table-form">
-              <thead>
-                <th>업태<span style="font-size: 14px; color: #EF0040;">*</span></th>
-                <th>업종<span style="font-size: 14px; color: #EF0040;">*</span></th>
-                <th style="width: 440px;">사업장 주소<span style="font-size: 14px; color: #EF0040;">*</span></th>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <input v-model="customerInfo.btype" class="input-text" placeholder="업태 입력">
-                  </td>
-                  <td>
-                    <input v-model="customerInfo.bkind" class="input-text" placeholder="업종 입력">
-                  </td>
-                  <td>
-                    <input v-model="customerInfo.addr" class="input-text" placeholder="사업장 주소 입력" style="width: 430px;">
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="upload-container-show">
-              <div>
-                <span>사업자 등록증</span>
-                <span style="font-size: 13px; color: #999999;">&nbsp;&nbsp;*사업자등록증을 업로드하면 자동으로 입력됩니다.</span>
-                <br>
-                <v-btn
-                  class="btn-save"
-                  color="#003366"
-                  flat
-                  :text="customerFileInfo.fname || customerFile? '파일 재선택': '파일선택'"
-                  width="105"
-                  @click="triggerFileInput"
-                />
-                <input
-                  ref="customerFileInput"
-                  accept="application/pdf"
-                  style="display: none;"
-                  type="file"
-                  @change="handleFileUpload"
-                >
-                <span style="color: #003366; margin-left: 10px;">{{ customerFileInfo.fname? customerFileInfo.fname: customerFile?.name }}</span>
-              </div>
-              <div class="detail-container-show" @click="showCustomerDetail = !showCustomerDetail">
-                <span class="detail-setting">상세 내용 설정</span>
-                <i class="mdi mdi-chevron-up" style="margin-left: 10px;" />
-              </div>
-            </div>
-          </div>
-          <div v-else class="detail-container" @click="showCustomerDetail = !showCustomerDetail">
-            <span class="detail-setting">상세 내용 설정</span>
-            <i class="mdi mdi-chevron-down" style="margin-left: 10px;" />
-          </div>
-        </div>
-        <!-- 매출 경로 -->
-        <div class="form-container">
-          <div class="info-title-container">
-            <span class="title mr-3">매출 경로</span>
-            <label>
-              <input
-                :checked="salesData.s_path === 0"
-                style="margin-left: 5px;"
-                type="radio"
-                @change="setSalesPath(0)"
+        <v-row>
+          <v-col offset="11">
+            <v-icon 
+            class="mdi mdi-close close-btn"
+            size="x-small" 
+            @click="closeDialog"/>
+          </v-col>
+        </v-row>
+
+        <v-row dense>
+          <v-col cols="4">
+            <span class="span-sm-1">사건관리번호 </span>
+            <span class="span-sm-2">{{ caseData.casenum }}</span>
+          </v-col>
+
+          <v-col cols="1" offset="5">
+            <v-btn
+                class="mr-8 mb-3"
+                :color="isBusiness ? '#0048B2' : '#FFFFFF'"
+                height="36px"
+                width="77px"
+                @click="toggleType"
               >
-              <span> 직접</span>
-            </label>
-            <label>
-              <input
-                :checked="salesData.s_path === 1"
-                style="margin-left: 15px;"
-                type="radio"
-                @change="setSalesPath(1)"
+              <span :class="isBusiness ? 'text-white' : 'text-business'">사업자</span>
+            </v-btn>
+          </v-col>
+          <v-col cols="1">
+            <v-btn
+                class="mr-8 mb-3"
+                :color="!isBusiness ? '#0048B2' : '#FFFFFF'"
+                height="36px"
+                width="77px"
+                @click="toggleType"
               >
-              <span> 파트너</span>
-            </label>
-            <span v-if="salesData.s_path === 1" class="info-code">파트너 코드</span>
-            <span v-if="salesData.s_path === 1" class="info-code-value">{{ partnerInfo.code? partnerInfo.code: '확인되지 않음' }}</span>
-          </div>
-          <div v-if="salesData.s_path === 1">
-            <table class="table-form">
-              <thead>
-                <th>고객사명<span style="font-size: 14px; color: #EF0040;">*</span></th>
-                <th>담당자명</th>
-                <th>연락처</th>
-                <th>이메일</th>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <input v-model="salesData.p_name" class="input-text" placeholder="고객사명 입력">
-                  </td>
-                  <td>
-                    <input v-model="salesData.p_contact" class="input-text" placeholder="담당자명 입력">
-                  </td>
-                  <td>
-                    <input v-model="salesData.p_phone" class="input-text" placeholder="010-1234-5678">
-                  </td>
-                  <td>
-                    <input v-model="salesData.p_email" class="input-text" placeholder="example@salser.com">
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <!-- 파트너 정보 상세 설정 -->
-            <div v-if="showPartnerDetail">
-              <table class="table-form">
-                <thead>
-                  <th style="width: 440px;">사업자 등록 번호<span style="font-size: 14px; color: #EF0040;">*</span></th>
-                  <th>상호(법인명)<span style="font-size: 14px; color: #EF0040;">*</span></th>
-                  <th>대표자명<span style="font-size: 14px; color: #EF0040;">*</span></th>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <input v-model="partnerInfo.bnum" class="input-text" placeholder="123-45-67890" style="width: 430px;">
-                    </td>
-                    <td>
-                      <input v-model="partnerInfo.name" class="input-text" placeholder="상호 입력">
-                    </td>
-                    <td>
-                      <input v-model="partnerInfo.ceo" class="input-text" placeholder="대표자명 입력">
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <table class="table-form">
-                <thead>
-                  <th>업태<span style="font-size: 14px; color: #EF0040;">*</span></th>
-                  <th>업종<span style="font-size: 14px; color: #EF0040;">*</span></th>
-                  <th style="width: 440px;">사업장 주소<span style="font-size: 14px; color: #EF0040;">*</span></th>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <input v-model="partnerInfo.btype" class="input-text" placeholder="업태 입력">
-                    </td>
-                    <td>
-                      <input v-model="partnerInfo.bkind" class="input-text" placeholder="업종 입력">
-                    </td>
-                    <td>
-                      <input v-model="partnerInfo.addr" class="input-text" placeholder="사업장 주소 입력" style="width: 430px;">
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <div class="upload-container-show">
-                <div>
-                  <span>사업자 등록증</span>
-                  <span style="font-size: 13px; color: #999999;">&nbsp;&nbsp;*사업자등록증을 업로드하면 자동으로 입력됩니다.</span>
-                  <br>
-                  <v-btn
-                    class="btn-save"
-                    color="#003366"
-                    flat
-                    :text="partnerFileInfo.fname || partnerFile? '파일 재선택': '파일선택'"
-                    width="105"
-                    @click="triggerPartFileInput"
-                  />
-                  <input
-                    ref="partnerFileInput"
-                    accept="application/pdf"
-                    style="display: none;"
-                    type="file"
-                    @change="handlePartFileUpload"
-                  >
-                  <span style="color: #003366; margin-left: 10px;">{{ partnerFileInfo.fname? partnerFileInfo.fname: partnerFile?.name }}</span>
-                </div>
-                <div class="detail-container-show" @click="showPartnerDetail = !showPartnerDetail">
-                  <span class="detail-setting">상세 내용 설정</span>
-                  <i class="mdi mdi-chevron-up" style="margin-left: 10px;" />
-                </div>
-              </div>
-            </div>
-            <div v-else class="detail-container" @click="showPartnerDetail = !showPartnerDetail">
-              <span class="detail-setting">상세 내용 설정</span>
-              <i class="mdi mdi-chevron-down" style="margin-left: 10px;" />
-            </div>
-          </div>
-        </div>
-        <!-- 매출 정보 -->
-        <div class="form-container" style="background-color: #F8F8F8;">
-          <div class="info-title-container">
-            <span class="title">매출 정보</span>
-          </div>
-          <table class="table-form">
-            <thead>
-              <th style="width: 440px;">건 명</th>
-              <th />
-              <th>매출 예상일</th>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <input v-model="salesData.s_name" class="input-text" placeholder="건 명 입력" style="width: 430px;">
-                </td>
-                <td>
-                  <label>
-                    <input
-                      :checked="salesData.s_btype === 0"
-                      style="margin-left: 5px;"
-                      type="radio"
-                      @change="setBType(0)"
-                    >
-                    <span> 일반형</span>
-                  </label>
-                  <label>
-                    <input
-                      :checked="salesData.s_btype === 1"
-                      style="margin-left: 15px;"
-                      type="radio"
-                      @change="setBType(1)"
-                    >
-                    <span> 과금형</span>
-                  </label>
-                </td>
-                <td>
-                  <flat-pickr v-model="salesData.s_eday" class="custom-datepicker" :config="fpConfig" style="background-color: #FFFFFF;" />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <table class="table-form" :style="salesData.s_btype === 1? 'border-bottom: 1px solid #EEEEEE;': ''">
-            <thead>
-              <th>매출액</th>
-              <th>매출이익</th>
-              <th>원가</th>
-              <th>영업 단계</th>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <input v-model="salesData.s_amnt" class="input-text" placeholder="0">
-                </td>
-                <td>
-                  <input v-model="calcProfit" class="input-text" disabled placeholder="0">
-                </td>
-                <td>
-                  <input
-                    v-model="salesData.s_cost"
-                    class="input-text"
-                    placeholder="0"
-                    @focusin="onCreatePurchase"
-                  >
-                </td>
-                <td>
-                  <select
-                    v-model="selectedStep"
-                    style="width: 205px; height: 40px; border: 1px solid #DDDDDD;"
-                    @change="setSalesStep()"
-                  >
-                    <option value="0">20%</option>
-                    <option value="1">40%</option>
-                    <option value="2">60%</option>
-                    <option value="3">80%</option>
-                    <option value="4">100%</option>
-                  </select>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <!-- 과금 정보-->
-          <table v-if="salesData.s_btype === 1" class="table-form">
-            <thead>
-              <th style="width: 290px;">과금주기</th>
-              <th style="width: 290px;">결제일</th>
-              <th style="width: 280px;">결제기간</th>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <select
-                    v-model="salesData.b_cycle"
-                    style="width: 280px; height: 40px; border: 1px solid #DDDDDD;"
-                  >
-                    <option value="1">매월</option>
-                    <option value="3">3개월</option>
-                    <option value="6">6개월</option>
-                  </select>
-                </td>
-                <td>
-                  <select
-                    v-model="salesData.b_day"
-                    style="width: 280px; height: 40px; border: 1px solid #DDDDDD;"
-                  >
-                    <option value="0">말일</option>
-                    <option value="5">5일</option>
-                    <option value="25">25일</option>
-                  </select>
-                </td>
-                <td>
-                  <flat-pickr v-model="salesData.b_start" class="custom-datepicker" :config="fpConfig" style="background-color: #FFFFFF; width: 130px;" />
-                  ~
-                  <flat-pickr v-model="salesData.b_end" class="custom-datepicker" :config="fpConfig" style="background-color: #FFFFFF; width: 130px;" />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <!-- 과금 데이터-->
-          <div v-if="salesData.s_btype === 1" class="paydata-container">
-            <div v-for="(item, index) in payData" :key="index" style="width: 150px;">
-              <table>
-                <thead>
-                  <th style="width: 140px; font-size: 14px; text-align: left;">{{ item.date }}</th>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <input
-                        class="input-text"
-                        disabled
-                        placeholder="입력"
-                        style="width: 130px;"
-                        :value="numToCommaString(item.amnt)"
-                      >
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <!-- 매입 내용 -->
-        <div v-if="purchaseData && purchaseData.length > 0" class="form-container" style="background-color: #F8F8F8;">
-          <div class="info-title-container">
-            <span class="title">매입 내용</span>
-          </div>
-          <div class="table-container">
-            <table class="table-purchase">
-              <thead>
-                <tr>
-                  <th
-                    v-for="(_, key) in purchaseHeaders"
-                    :key="key"
-                    :width="purchaseHeaders[key].width"
-                  >
-                    {{ purchaseHeaders[key].name }}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="(item, index) in purchaseData"
-                  :key="index"
-                >
-                  <td>
-                    <span v-if="item.code" class="purchase-text">{{ item.code }}</span>
-                    <span v-else class="purchase-text" style="color: #EF0040; font-weight: bold;">확인되지 않음</span>
-                  </td>
-                  <td>
-                    <span class="purchase-text">{{ item.name }}</span>
-                  </td>
-                  <td>
-                    <span class="purchase-text">{{ item.detail }}</span>
-                  </td>
-                  <td>
-                    <span class="purchase-text">{{ numToCommaString(item.amnt) }}</span>
-                  </td>
-                  <td>
-                    <v-btn
-                      class="btn-ctr"
-                      color="#003366"
-                      flat
-                      text="수정"
-                      @click="onModifyPurchase(index)"
-                    />
-                    <v-btn
-                      border
-                      class="ml-2 btn-ctr"
-                      flat
-                      text="삭제"
-                      @click="onDeletePurchase(index)"
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <!-- 업엉 히스토리 -->
-        <div class="history-container">
-          <div class="info-title-container">
-            <span class="title">영업 히스토리</span>
-          </div>
-          <table class="table-form">
-            <thead>
-              <th style="width: 140px;">등록일자</th>
-              <th style="width: 140px;">작성자</th>
-              <th style="width: 440px;">내용</th>
-              <th style="width: 140px;" />
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <input class="input-text" disabled style="width: 130px;" :value="datetimeToyymmdd('')">
-                </td>
-                <td>
-                  <input class="input-text" disabled style="width: 130px;" :value="props.name">
-                </td>
-                <td>
-                  <input v-model="historyText" class="input-text" placeholder="내용 입력" style="width: 440px;">
-                </td>
-                <td>
-                  <v-btn
-                    border=""
-                    class="btn-history"
-                    :disabled="props.sid === 0"
-                    flat
-                    text="히스토리 등록"
-                    @click="AddHistory"
-                  />
-                </td>
-              </tr>
-              <tr v-for="(item, index) in historyList" :key="index" style="background-color: #F8F8F8;">
-                <td colspan="4">
-                  <span style="color: #999999; margin-left: 20px;">{{ datetimeToyymmdd(item.createdAt) }}</span>
-                  <span style="font-weight: 500; margin-left: 15px;">{{ item.name }}</span>
-                  <span style="font-weight: 400; margin-left: 15px;">{{ item.comment }}</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="save-container">
+              <span :class="!isBusiness ? 'text-white' : 'text-business'">개인</span>
+            </v-btn>
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col cols="1">
+            <span class="subtitle">
+              이름<span class="reddot">*</span>
+            </span>
+          </v-col>
+        </v-row>
+
+        <v-row no-gutters>
+          <v-col cols="4">
+            <input v-model="caseData.c_name" class="input-text" placeholder="">
+          </v-col>
+        </v-row>
+
+        <v-row dense>
+          <v-col cols="4">
+            <span class="subtitle">
+              전화번호<span class="reddot">*</span>
+            </span>
+          </v-col>
+          <v-col cols="4">
+            <span class="subtitle">
+              주민등록번호
+            </span>
+          </v-col>
+          <v-col cols="4">
+            <span class="subtitle">
+              이메일
+            </span>
+          </v-col>
+        </v-row>
+
+        <v-row no-gutters>
+          <v-col cols="4">
+            <input v-model="caseData.c_phone" class="input-text" placeholder="010-0000-0000">
+          </v-col>
+          <v-col cols="4">
+            <input v-model="caseData.c_inum" class="input-text" placeholder="000000-0000000">
+          </v-col>
+          <v-col cols="4">
+            <input v-model="caseData.c_email" class="input-text" placeholder="username@example.com">
+          </v-col>
+        </v-row>
+
+        <v-row dense>
+          <v-col cols="auto">
+            <span class="subtitle">주소</span>
+          </v-col>
+        </v-row>
+
+        <v-row no-gutters>
+          <v-col cols="9">
+            <input 
+                v-model="caseData.c_address" 
+                style="width: 675px;" 
+                class="input-text" placeholder="">
+          </v-col>
+          <!-- <v-col offset="1">
+            <v-btn
+                class="mr-8 mb-3"
+                color="#003366"
+                variant="outlined"
+                height="40px"
+                width="108px"
+                flat
+                @click="onRegist(0)"
+              >
+                주소검색
+                <v-icon icon="mdi-magnify"></v-icon>
+            </v-btn>
+          </v-col> -->
+        </v-row>
+
+        <v-row dense>
+          <v-col cols="auto">
+            <span class="subtitle">메모</span>
+          </v-col>
+        </v-row>
+
+        <v-row no-gutters>
+          <v-col cols="auto">
+            <v-textarea
+              height="85px"
+              width="675px"
+              color="white"
+              bg-color="white"
+              variant="outlined"
+              auto-grow
+              v-model=caseData.memo
+            >
+            </v-textarea>
+          </v-col>
+        </v-row>
+
+        <v-row dense class="save-container">
           <!--<v-btn
             border
             class="btn-save"
@@ -566,32 +225,22 @@
           >
             닫기
           </v-btn>-->
-          <v-btn
-            class="btn-save"
-            color="#003366"
-            flat
-            @click="checkInput"
-          >
-            저장
-          </v-btn>
-        </div>
-        <div class="bottom-container">
-          <div>
-            <div>
-              <span style="color: #999999;">SalesCode: {{ salesData.code? salesData.code: '-' }}</span>
-            </div>
-            <div>
-              <span style="color: #999999;">최초등록일: {{ salesData.createdAt? datetimeToyymmdd(salesData.createdAt): '-' }}</span>
-              <span style="color: #999999; margin-left: 20px;">최종수정일: {{ salesData.updatedAt? datetimeToyymmdd(salesData.updatedAt): '-' }}</span>
-            </div>
-          </div>
-          <div style="margin-top: 10px;">
-            <span>담당자</span>
-            <select class="ml-3">
-              <option :value="props.name">@{{ props.name }}</option>
-            </select>
-          </div>
-        </div>
+          <v-col align="end">
+            <v-btn
+              class="btn-save"
+              color="#0048B2"
+              flat
+              @click="checkInput"
+            >
+              저장
+            </v-btn>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="2">
+            <span style="color: #999999;">담당자: {{ caseData.manager }}</span>
+          </v-col>
+        </v-row>
       </div>
     </div>
   </v-dialog>
@@ -633,23 +282,25 @@
 
   const emit = defineEmits<{(e: 'update', value: boolean): void}>();
 
-  const salesData = ref<Sales>({
+  const isBusiness = ref<boolean>(true); // true for 사업자, false for 개인
+
+  // Function to toggle between 사업자 and 개인
+  const toggleType = () => {
+    isBusiness.value = !isBusiness.value;
+  };
+
+  const caseData = ref<Sales>({
     gid: 0,
     uid: 0,
     saleser: '',
     c_name: '',
-    s_path: 0,
-    s_type: 0,
-    s_btype: 0,
-    s_eday: '',
-    s_amnt: 0,
-    s_profit: 0,
-    s_cost: 0,
-    s_step: 0,
-    b_cycle: 1,
-    b_day: 0,
-    b_start: '',
-    b_end: '',
+    c_phone: '',
+    c_address: '',
+    c_inum: '',
+    c_email: '',
+    memo: '',
+    manager: '하헌일',
+    casenum: '2030_2939_1111'
   });
 
   const steps = ref([
@@ -688,32 +339,18 @@
   const initData = () => {
     updated.value = false;
 
-    salesData.value = {
+    caseData.value = {
       gid: 0,
       uid: 0,
       saleser: '',
       c_name: '',
-      c_contact: '',
       c_phone: '',
+      c_address: '',
+      c_inum: '',
       c_email: '',
-      s_path: 0,
-      p_name: '',
-      p_contact: '',
-      p_phone: '',
-      p_email: '',
-      s_type: 0,
-      s_name: '',
-      s_btype: 0,
-      s_eday: '',
-      s_amnt: 0,
-      s_profit: 0,
-      s_cost: 0,
-      s_step: 0,
-      b_cycle: 1,
-      b_day: 0,
-      b_start: '',
-      b_end: '',
-      purchase: '',
+      memo: '',
+      manager: '하헌일',
+      casenum: '2030_2939_1111'
     };
 
     purchaseData.value = [];
@@ -739,7 +376,7 @@
       initData();
 
       if (props.sid) {
-        console.log(`onUpdated salesData.value.id: props.sid: ${props.sid}`);
+        console.log(`onUpdated caseData.value.id: props.sid: ${props.sid}`);
 
         const response = await apiGetById(props.sid);
         if (response.status !== 200) {
@@ -747,14 +384,14 @@
           errorMsg.value = '데이터 조회 중 문제가 발생했습니다.';
           showErrorDialog.value = true;
         } else {
-          salesData.value = response.data.sales;
-          selectedStep.value = salesData.value.s_step.toString();
-          if (salesData.value?.purchase) {
-            purchaseData.value = JSON.parse(salesData.value.purchase);
+          caseData.value = response.data.sales;
+          selectedStep.value = caseData.value.s_step.toString();
+          if (caseData.value?.purchase) {
+            purchaseData.value = JSON.parse(caseData.value.purchase);
             calcCost();
-            // console.log(`purchaseData: ${salesData.value.purchase}`);
+            // console.log(`purchaseData: ${caseData.value.purchase}`);
           }
-          console.log(salesData.value);
+          console.log(caseData.value);
 
           // 고객정보
           if (response.data.cinfo) {
@@ -765,7 +402,7 @@
           }
 
           // 파트너정보
-          if (salesData.value.s_path === 1 && response.data.pinfo) {
+          if (caseData.value.s_path === 1 && response.data.pinfo) {
             partnerInfo.value = response.data.pinfo;
             if (partnerInfo.value.fileid) {
               partnerFileInfo.value = response.data.pfile;
@@ -785,25 +422,25 @@
 
   // 이익 계산
   const calcProfit = computed<number>(() => {
-    if (salesData.value && salesData.value.s_amnt >= salesData.value.s_cost) {
+    if (caseData.value && caseData.value.s_amnt >= caseData.value.s_cost) {
       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      salesData.value.s_profit = salesData.value.s_amnt - salesData.value.s_cost;
+      caseData.value.s_profit = caseData.value.s_amnt - caseData.value.s_cost;
     }
-    return salesData.value.s_profit;
+    return caseData.value.s_profit;
   });
 
   // 과금 데이터
   const payData = computed<PaymentInterface []>(() => {
     const data: PaymentInterface[] = [];
 
-    if (!salesData.value.b_start || !salesData.value.b_end) {
+    if (!caseData.value.b_start || !caseData.value.b_end) {
       return data;
     }
 
-    const dt = new Date(salesData.value.b_start);
-    const end = new Date(salesData.value.b_end);
-    const cycle = Number(salesData.value.b_cycle);
-    const bDay = Number(salesData.value.b_day);
+    const dt = new Date(caseData.value.b_start);
+    const end = new Date(caseData.value.b_end);
+    const cycle = Number(caseData.value.b_cycle);
+    const bDay = Number(caseData.value.b_day);
 
     const curDay = dt.getDate();
     const firstDay = bDay === 0 ? getLastDayOfMonth(dt) : bDay;
@@ -828,14 +465,14 @@
 
     // 월 요금 계산
     const count = data.length;
-    const monthly = Math.floor(salesData.value.s_amnt / count);
+    const monthly = Math.floor(caseData.value.s_amnt / count);
     let sum = 0;
     for (const item of data) {
       item.amnt = monthly;
       sum += monthly;
     }
     // 나머지 금액 첫달에 합산
-    const diff = salesData.value.s_amnt - sum;
+    const diff = caseData.value.s_amnt - sum;
     if (diff !== 0) {
       data[0].amnt += diff;
     }
@@ -843,35 +480,35 @@
   });
 
   const setSalesPath = (spath: number) => {
-    salesData.value.s_path = spath;
+    caseData.value.s_path = spath;
   };
 
   const setBType = (btype: number) => {
-    salesData.value.s_btype = btype;
+    caseData.value.s_btype = btype;
   };
 
   const selectedStep = ref<string>('0');
   const setSalesStep = () => {
-    salesData.value.s_step = Number(selectedStep.value);
+    caseData.value.s_step = Number(selectedStep.value);
   };
 
   const checkInput = () => {
-    if (!salesData.value.c_name || salesData.value.c_name.length < 2) {
+    if (!caseData.value.c_name || caseData.value.c_name.length < 2) {
       errorTitle.value = '고객사명 입력필요';
       errorMsg.value = '2 글자 이상 입력해주세요.';
       showErrorDialog.value = true;
       return;
     }
-    if (salesData.value.s_path === 1 && (!salesData.value.p_name || salesData.value.p_name.length < 2)) {
+    if (caseData.value.s_path === 1 && (!caseData.value.p_name || caseData.value.p_name.length < 2)) {
       errorTitle.value = '파트너명 입력필요';
       errorMsg.value = '2 글자 이상 입력해주세요.';
       showErrorDialog.value = true;
       return;
-    } else if (salesData.value.s_path === 0) {
-      salesData.value.p_name = '직접';
+    } else if (caseData.value.s_path === 0) {
+      caseData.value.p_name = '직접';
     }
 
-    salesData.value.saleser = props.username;
+    caseData.value.saleser = props.username;
 
     confirmTitle.value = '영업관리 저장';
     confirmMsg.value = '입력하신 영업관리 내용을 저장 할까요?';
@@ -880,20 +517,20 @@
 
   const updated = ref<boolean>(false);
   const closeDialog = () => {
-    salesData.value.id = 0; // 다시 열었을때 data를 다시 불러오기 위해.
+    caseData.value.id = 0; // 다시 열었을때 data를 다시 불러오기 위해.
     emit('update', updated.value);
   };
 
   const saveSalesData = async () => {
     showConfirmDialog.value = false;
 
-    salesData.value.purchase = JSON.stringify(purchaseData.value);
-    if (salesData.value.s_btype === 1) {
-      salesData.value.b_data = JSON.stringify(payData.value);
+    caseData.value.purchase = JSON.stringify(purchaseData.value);
+    if (caseData.value.s_btype === 1) {
+      caseData.value.b_data = JSON.stringify(payData.value);
     }
 
     const sendData = {
-      sales: salesData.value,
+      sales: caseData.value,
       cinfo: customerInfo.value,
       cfile: customerFileInfo.value,
       pinfo: partnerInfo.value,
@@ -914,8 +551,8 @@
       updated.value = true;
 
       if (response.data && response.data.id) {
-        salesData.value = response.data;
-        console.log(`Saved ID: ${salesData.value.id}`);
+        caseData.value = response.data;
+        console.log(`Saved ID: ${caseData.value.id}`);
       }
     }
   };
@@ -979,7 +616,7 @@
   const historyText = ref<string>();
   const AddHistory = async () => {
     if (historyText.value) {
-      const result = await apiAddSalesHistory(Number(salesData.value.id), historyText.value);
+      const result = await apiAddSalesHistory(Number(caseData.value.id), historyText.value);
       if (result.status === 201 && result.data) {
         historyList.value.push(result.data);
       }
@@ -1025,9 +662,9 @@
 
   // Purchase Dialog
   const calcCost = () => {
-    salesData.value.s_cost = 0;
+    caseData.value.s_cost = 0;
     for (const p of purchaseData.value) {
-      salesData.value.s_cost += Number(p.amnt);
+      caseData.value.s_cost += Number(p.amnt);
     }
   };
 
@@ -1090,21 +727,21 @@
 
   .left-container {
     border-radius: 8px 0px 0px 8px;
-    border: 1px solid #EEEEEE;
-    background-color: #F2F5F7;
-    width: 207px;
-    padding-top: 30px;
-    padding-left: 40px;
+    background-image: url('@/assets/dialog_left.png'); /* Set the background image */
+    background-size: cover; /* Cover the entire container */
+    width: 405px;
+    height: 687px;
+    padding-top: 10%;
   }
 
   .right-container {
     border-radius: 0px 8px 8px 0px;
-    border: 1px solid #EEEEEE;
     background-color: #FFFFFF;
-    width: 961px;
+    width: 735px;
     height: auto;
     max-height: 991px;
     padding-top: 10px;
+    padding-left: 30px;
     overflow-y: auto;
   }
 
@@ -1144,16 +781,10 @@
     border-right: 1px dotted #999999;
   }
 
-  .close-btn-container {
-    position: relative;
-  }
-
   .close-btn {
-    position: absolute;
-    top: 10px;           /* 위쪽에서 10px 떨어진 위치 */
-    right: 25px;         /* 오른쪽에서 10px 떨어진 위치 */
     cursor: pointer;
-    font-size: 14px;
+    width: 24px;
+    height: 24px;
   }
 
   .form-container {
@@ -1361,5 +992,65 @@
     height: 40px;
     box-sizing: border-box;
     font-size: 14px;
+  }
+
+  .left-container .dialog-title {
+    font-size: 20px;
+    font-family: 'Pretendard';
+    font-weight: 600;
+    color: #FFFFFF;
+    text-align: start;
+  }
+
+  .left-container .dialog-content {
+    font-size: 16px;
+    font-family: 'Pretendard';
+    font-weight: 500;
+    color: #DDDDDD;
+    text-align: start;
+  }
+
+  .left-container .avatar-img {
+    width: 122px;
+    height: 122px;
+  }
+
+  .left-container .icon-arrow {
+    width: 36px;
+    height: 36px;
+    top: 35%;
+  }
+
+  .span-sm-1 {
+    font-family: "Abhaya Libre";
+    font-weight: 700;
+    font-size: 14px;
+    color: #777777;
+  }
+
+  .span-sm-2 {
+    font-family: "Abhaya Libre";
+    font-weight: 400;
+    font-size: 14px;
+    color: #999999;
+  }
+
+  .text-business {
+    color: #0048B2;
+  }
+
+  .text-white {
+    color: #FFFFFF;
+  }
+
+  span.subtitle {
+    font-family: "Abhaya Libre";
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  span.reddot {
+    font-size: 14px; 
+    color: #EF0040;
   }
 </style>

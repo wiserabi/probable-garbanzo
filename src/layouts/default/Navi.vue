@@ -28,10 +28,16 @@
     </div>
     <div class="line-container" />
   </v-app-bar>
+
   <v-navigation-drawer
     class="flat-drawer"
     width="234"
   >
+    <v-row>
+      <v-col>
+        <span class="navi-home">HOME</span>
+      </v-col>
+    </v-row>
     <v-list class="mt-2" density="default" nav>
       <v-list-item
         v-for="(item, index) in menuList"
@@ -39,11 +45,11 @@
         @click="onMenuSelect(index)"
       >
         <v-list-item-title v-if="selectedMenuIndex === index">
-          <v-icon color="#003366" :icon="item.icon" />
+          <v-icon v-if="item.icon.startsWith('mdi')" color="#003366" :icon="item.icon" />
           <span class="menu-selected-text">{{ item.text }}</span>
         </v-list-item-title>
         <v-list-item-title v-else>
-          <v-icon color="#99ADC2" :icon="item.icon" />
+          <v-icon v-if="item.icon.startsWith('mdi')" color="#99ADC2" :icon="item.icon" />
           <span class="menu-text">{{ item.text }}</span>
         </v-list-item-title>
       </v-list-item>
@@ -81,6 +87,8 @@
       // { text: '설정', to: '/', icon: 'mdi-cog' },
     ]);
 
+  const searchText = ref<string>('');
+  
   const getUserName = () => {
     return '하헌일';
   };
@@ -207,5 +215,13 @@ span {
   font-weight: 400; /* Set font weight to 400 */
   text-align: left;
   margin-left: 0px;
+}
+
+.navi-home {
+  width: 257px;
+  height: 44px;
+  font-size: 16px;
+  color: #99ADC2;
+  padding-left: 10px;
 }
 </style>
