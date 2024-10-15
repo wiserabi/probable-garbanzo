@@ -510,8 +510,8 @@
 
     caseData.value.saleser = props.username;
 
-    confirmTitle.value = '영업관리 저장';
-    confirmMsg.value = '입력하신 영업관리 내용을 저장 할까요?';
+    confirmTitle.value = '신규 사건 등록';
+    confirmMsg.value = '입력된 정보를 저장하고 신규로 등록하시겠습니까?';
     showConfirmDialog.value = true;
   };
 

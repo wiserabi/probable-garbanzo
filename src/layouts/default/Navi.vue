@@ -5,7 +5,9 @@
         <div class="logo-container">
           <img height="77px" src="@/assets/logo_aila.png" width="262px">
         </div>
-        <div class="menu-desc-continer">
+        <div>
+          <v-icon icon="mdi mdi-arrow-left-bold-circle" 
+          width="30px" height="30px" size="x-large" color="#0048B2"/>
           <input v-model="searchText" class="search-text" @keydown.enter="onSearch">
         </div>
       </div>
@@ -43,10 +45,12 @@
         v-for="(item, index) in menuList"
         :key="index"
         @click="onMenuSelect(index)"
+        :class="{ 'selected-item': selectedMenuIndex === index }"
       >
         <v-list-item-title v-if="selectedMenuIndex === index">
-          <v-icon v-if="item.icon.startsWith('mdi')" color="#003366" :icon="item.icon" />
+          <v-icon v-if="item.icon.startsWith('mdi')" color="#FFFFFF" :icon="item.icon" />
           <span class="menu-selected-text">{{ item.text }}</span>
+          <v-icon icon="mdi mdi-chevron-right" color="#FFFFFF"></v-icon>
         </v-list-item-title>
         <v-list-item-title v-else>
           <v-icon v-if="item.icon.startsWith('mdi')" color="#99ADC2" :icon="item.icon" />
@@ -88,7 +92,7 @@
     ]);
 
   const searchText = ref<string>('');
-  
+
   const getUserName = () => {
     return '하헌일';
   };
@@ -170,7 +174,7 @@ span {
 .menu-selected-text {
   font-size: 16px;
   font-weight: 600;
-  color: #003366;
+  color: #FFFFFF;
 }
 
 .flat-drawer {
@@ -223,5 +227,9 @@ span {
   font-size: 16px;
   color: #99ADC2;
   padding-left: 10px;
+}
+
+.selected-item {
+  background-color: #3A57E8; /* Background color for selected item */
 }
 </style>
