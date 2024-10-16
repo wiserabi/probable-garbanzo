@@ -97,29 +97,33 @@
             <span class="span-sm-1">사건관리번호 </span>
             <span class="span-sm-2">{{ caseData.casenum }}</span>
           </v-col>
-
-          <v-col cols="1" offset="5">
-            <v-btn
-                class="mr-8 mb-3"
+          
+          <v-col cols="3" offset="5">
+            <div class="inner-shadow-wrapper">
+              <v-btn
                 :color="isBusiness ? '#0048B2' : '#FFFFFF'"
                 height="36px"
                 width="77px"
                 @click="toggleType"
+                flat
+                outlined
               >
-              <span :class="isBusiness ? 'text-white' : 'text-business'">사업자</span>
-            </v-btn>
-          </v-col>
-          <v-col cols="1">
-            <v-btn
-                class="mr-8 mb-3"
+                <span :class="isBusiness ? 'text-white' : 'text-business'">사업자</span>
+              </v-btn>
+
+              <v-btn
                 :color="!isBusiness ? '#0048B2' : '#FFFFFF'"
                 height="36px"
-                width="77px"
+                width="62px"
                 @click="toggleType"
+                flat
+                outlined
               >
-              <span :class="!isBusiness ? 'text-white' : 'text-business'">개인</span>
-            </v-btn>
+                <span :class="!isBusiness ? 'text-white' : 'text-business'">개인</span>
+              </v-btn>
+            </div>
           </v-col>
+          
         </v-row>
 
         <v-row>
@@ -1052,5 +1056,19 @@
   span.reddot {
     font-size: 14px; 
     color: #EF0040;
+  }
+
+  .inner-shadow-wrapper {
+    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.2);
+    width: 147px;
+    height: 44px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto; /* Centers the wrapper in the column */
+  }
+
+  .inner-shadow-wrapper .v-btn {
+    margin: 0 1px; /* Adds a small gap between buttons */
   }
 </style>
