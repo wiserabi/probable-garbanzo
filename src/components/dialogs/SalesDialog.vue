@@ -101,17 +101,6 @@
           <v-col cols="3" offset="5">
             <div class="inner-shadow-wrapper">
               <v-btn
-                :color="isBusiness ? '#0048B2' : '#FFFFFF'"
-                height="36px"
-                width="77px"
-                @click="toggleType"
-                flat
-                outlined
-              >
-                <span :class="isBusiness ? 'text-white' : 'text-business'">사업자</span>
-              </v-btn>
-
-              <v-btn
                 :color="!isBusiness ? '#0048B2' : '#FFFFFF'"
                 height="36px"
                 width="62px"
@@ -120,6 +109,16 @@
                 outlined
               >
                 <span :class="!isBusiness ? 'text-white' : 'text-business'">개인</span>
+              </v-btn>
+              <v-btn
+                :color="isBusiness ? '#0048B2' : '#FFFFFF'"
+                height="36px"
+                width="77px"
+                @click="toggleType"
+                flat
+                outlined
+              >
+                <span :class="isBusiness ? 'text-white' : 'text-business'">사업자</span>
               </v-btn>
             </div>
           </v-col>
@@ -741,11 +740,12 @@
   .right-container {
     border-radius: 0px 8px 8px 0px;
     background-color: #FFFFFF;
-    width: 735px;
+    width: 775px;
     height: auto;
     max-height: 991px;
     padding-top: 10px;
-    padding-left: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
     overflow-y: auto;
   }
 
@@ -1060,8 +1060,8 @@
 
   .inner-shadow-wrapper {
     box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
-    width: 151px;
-    height: 48px;
+    width: 153px;
+    height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
