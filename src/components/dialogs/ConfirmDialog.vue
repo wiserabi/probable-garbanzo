@@ -8,7 +8,7 @@
       </div>
       <v-card-title align="center" class="mt-7">
         <v-icon
-          color="#003366"
+          color="#0048B2"
           icon="mdi-check-circle"
           size="small"
         />
@@ -21,7 +21,7 @@
       </v-card-text>
       <div align="center" style="text-align: center; margin-bottom: 40px;">
         <v-btn border class="btn-cancel" flat @click="closeDialog(false)">취소</v-btn>
-        <v-btn class="btn-save" color="#003366" flat @click="closeDialog(true)">확인</v-btn>
+        <v-btn class="btn-save" color="#0048B2" flat @click="closeDialog(true)">저장</v-btn>
       </div>
     </v-card>
   </v-dialog>
@@ -76,7 +76,7 @@
   }
 
   .btn-cancel {
-    border: 1px solid #003366;
+    border: 1px solid #0048B2;
     border-radius: 4px;
     font-size: 14px;
     width: 65px;
