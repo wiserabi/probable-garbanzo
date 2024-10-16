@@ -1059,13 +1059,14 @@
   }
 
   .inner-shadow-wrapper {
-    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.2);
-    width: 147px;
-    height: 44px;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
+    width: 151px;
+    height: 48px;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 auto; /* Centers the wrapper in the column */
+    margin: 0 auto;
+    border-radius: 4px;
   }
 
   .inner-shadow-wrapper .v-btn {
