@@ -85,7 +85,7 @@
   const userId = ref<string>();
   const userPass = ref<string>();
   
-  router.push('/saleslist');
+  // router.push('/saleslist');
   const onSignInClick = async () => {
     const usernameRegex = /^[a-zA-Z][a-zA-Z0-9]{3,}$/;
     const passwordRegex = /^[a-zA-Z][a-zA-Z0-9]{7,}$/;
@@ -111,12 +111,12 @@
 
     showLoadingDialog.value = false;
     router.push('/saleslist');
-    // if (response && response.status === 201) {
-    //   router.push('/saleslist');
-    // } else {
-    //   infoMsg.value = '로그인 중 에러가 발생하였습니다.';
-    //   showInfoDialog.value = true;
-    // }
+    if (response && response.status === 201) {
+      router.push('/saleslist');
+    } else {
+      infoMsg.value = '로그인 중 에러가 발생하였습니다.';
+      showInfoDialog.value = true;
+    }
   };
 
   const onFindPassClick = () => {

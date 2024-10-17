@@ -6,8 +6,8 @@
           <img height="77px" src="@/assets/logo_aila.png" width="262px">
         </div>
         <div>
-          <v-icon icon="mdi mdi-arrow-left-bold-circle" 
-          width="30px" height="30px" size="x-large" color="#0048B2"/>
+          <!-- <v-icon icon="mdi mdi-arrow-left-bold-circle" 
+          width="30px" height="30px" size="x-large" color="#0048B2"/> -->
           <input v-model="searchText" class="search-text" @keydown.enter="onSearch">
         </div>
       </div>
@@ -74,12 +74,12 @@
     loadAuthInfo();
 
     const verifyResult = await apiVerifyToken();
-    // if (verifyResult && verifyResult.status === 200) {
-    //   //
-    // } else {
-    //   console.log(`verifyResult: ${verifyResult}`);
-    //   router.push('/auth/SignIn');
-    // }
+    if (verifyResult && verifyResult.status === 200) {
+      //
+    } else {
+      console.log(`verifyResult: ${verifyResult}`);
+      router.push('/auth/SignIn');
+    }
   });
 
   const menuList = ref<{text: string, to: string, icon: string}[]>(
