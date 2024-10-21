@@ -8,6 +8,12 @@ interface IUserInfo {
   level: number;
 }
 
+interface IManagerInfo {
+  id: string;
+  name: string;
+  phone: string;
+}
+
 interface ITokenInfo {
   username: string;
   name: string;
@@ -21,6 +27,7 @@ export const authApiStore = defineStore('authApiStore', () => {
   const tokenInfo = ref<ITokenInfo>();
 
   const userInfo = ref<IUserInfo>();
+  const managerInfo = ref<IManagerInfo>();
 
   const axiosConfig = {
     baseURL: import.meta.env.VITE_API_SERVER_URL,
@@ -28,6 +35,11 @@ export const authApiStore = defineStore('authApiStore', () => {
   const authAxios = axios.create(axiosConfig);
 
   const authApiResponse = ref<any>(null);
+
+  const updateManagerInfo = (info: any) => {
+    managerInfo.value = info;
+    localStorage.setItem('managerInfo', JSON.stringify(managerInfo.value));
+  };
 
   const updateStatus = (res: any) => {
     authApiResponse.value = res;
@@ -50,6 +62,20 @@ export const authApiStore = defineStore('authApiStore', () => {
 
   const getToken = () => {
     return apiToken.value;
+  };
+
+  const getManagerId = () => {
+    if(!managerInfo.value){
+      return '';
+    }
+    return managerInfo.value.id;
+  };
+
+  const getManagerName = () => {
+    if(!managerInfo.value){
+      return '';
+    }
+    return managerInfo.value.name;
   };
 
   const getGid = () => {
@@ -99,6 +125,12 @@ export const authApiStore = defineStore('authApiStore', () => {
       userInfo.value = JSON.parse(uInfo);
       console.log(`userInfo: ${uInfo}`);
     }
+
+    const mInfo = localStorage.getItem('managerInfo');
+    if (mInfo) {
+      managerInfo.value = JSON.parse(mInfo);
+      console.log(`managerInfo: ${mInfo}`);
+    }
   };
 
   const apiSignIn = async (username: string, pass: string) => {
@@ -108,7 +140,8 @@ export const authApiStore = defineStore('authApiStore', () => {
       console.log(response.data);
       if (response.status === 201 && response.data.token) {
         updateToken(response.data.token);
-        updateUserInfo(response.data.info);
+        //updateUserInfo(response.data.info);
+        updateManagerInfo(response.data.info);
       }
     } catch (error) {
       const err = error as AxiosError;
@@ -157,5 +190,7 @@ export const authApiStore = defineStore('authApiStore', () => {
     getUid,
     getUserName,
     getName,
+    getManagerId,
+    getManagerName,
   };
 });

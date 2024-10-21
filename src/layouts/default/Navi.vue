@@ -22,7 +22,7 @@
             </v-avatar>
           </v-col>
           <v-col class="user-info">
-            <span class="user-name">{{ getUserName() }}</span>
+            <span class="user-name">{{ getManagerName() }}</span>
             <span class="user-court">{{ getCourt() }}</span>
           </v-col>
         </v-row>
@@ -67,7 +67,7 @@
 
   // API store
   const apiStore = authApiStore();
-  const { getName, loadAuthInfo, apiVerifyToken } = apiStore;
+  const { getName, loadAuthInfo, apiVerifyToken, getManagerName } = apiStore;
 
   onMounted(async () => {
     // Get default infos
@@ -92,10 +92,6 @@
     ]);
 
   const searchText = ref<string>('');
-
-  const getUserName = () => {
-    return '하헌일';
-  };
 
   const getCourt = () => {
     return '이강 법률사무소';

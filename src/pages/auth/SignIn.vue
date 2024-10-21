@@ -110,7 +110,6 @@
     const response = await apiSignIn(userId.value, userPass.value);
 
     showLoadingDialog.value = false;
-    router.push('/saleslist');
     if (response && response.status === 201) {
       router.push('/saleslist');
     } else {

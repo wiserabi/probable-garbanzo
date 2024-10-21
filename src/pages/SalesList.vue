@@ -201,13 +201,15 @@
 
   // API store
   const authStore = authApiStore();
-  const { getGid, getUid, getUserName, getName } = authStore;
+  const { getGid, getUid, getUserName, getName, getManagerName } = authStore;
 
   const apiStore = salesApiStore();
   const { apiSalesList } = apiStore;
 
   // 검색
   const searchText = ref<string>('');
+
+  const mname = getManagerName();
 
   // Loading Dialog
   const showLoadingDialog = ref<boolean>(false);
@@ -247,10 +249,10 @@
     console.log(`selprogress ${selprogress.value}`);
   });
 
-  const managers = ref<Array<string>>(['하헌일', '신동석']);
+  const managers = ref<Array<string>>([mname]);
 
   // 담당자 셀렉트박스
-  const selmanager = ref<string>('하헌일');
+  const selmanager = ref<string>(mname);
   watch(selmanager, () => {
     console.log(`selmanager ${selmanager.value}`);
   });
@@ -287,16 +289,16 @@
   // 테이블
   const tableHeaders = ref<Record <string, {name: string, width: string, style: string}>>((
     {
-      c_name: { name: '신청자명', width: '7%', style: '' },
-      p_name: { name: '전화번호', width: '9%', style: '' },
-      s_name: { name: '주소', width: '27%', style: '' },
-      saleser: { name: '사건번호', width: '11%', style: '' },
-      s_amnt: { name: '등록일', width: '7%', style: '' },
-      s_cost: { name: '제출일', width: '7%', style: '' },
-      s_profit: { name: '수임료', width: '8%', style: '' },
-      s_step: { name: '분납/상태', width: '6%', style: '' },
-      s_eday: { name: '담당변호사', width: '6%', style: '' },
-      updatedAt: { name: '담당자', width: '7%', style: '' },
+      applicant: { name: '신청자명', width: '7%', style: '' },
+      phone: { name: '전화번호', width: '9%', style: '' },
+      address: { name: '주소', width: '27%', style: '' },
+      casenum: { name: '사건번호', width: '11%', style: '' },
+      created: { name: '등록일', width: '7%', style: '' },
+      subdate: { name: '제출일', width: '7%', style: '' },
+      fee: { name: '수임료', width: '8%', style: '' },
+      paystate: { name: '분납/상태', width: '6%', style: '' },
+      attorney: { name: '담당변호사', width: '6%', style: '' },
+      mname: { name: '담당자', width: '7%', style: '' },
     }
   ));
 
@@ -322,16 +324,16 @@
       salesList.value = response.data;
       for (const item of response.data) {
         tableData.value.push({
-          c_name: item.c_name,
-          p_name: item.p_name,
-          s_name: item.s_name,
-          saleser: item.saleser,
-          s_amnt: numToCommaString(item.s_amnt),
-          s_cost: numToCommaString(item.s_cost),
-          s_profit: numToCommaString(item.s_profit),
-          s_step: ((item.s_step + 1) * 20) + '%',
-          s_eday: datetimeToyymmdd(item.s_eday),
-          updatedAt: datetimeToyymmdd(item.updatedAt),
+          applicant: item.applicant,
+          phone: item.phone,
+          address: item.address,
+          casenum: item.casenum,
+          created: datetimeToyymmdd(item.createdAt),
+          subdate: item.subdate,
+          fee: numToCommaString(item.fee ? item.fee : 0),
+          paystate: item.paystate,
+          attorney: item.attorney,
+          mname: getManagerName()
         });
       }
       pages.value = Math.ceil(tableData.value.length / Number(selCount.value));

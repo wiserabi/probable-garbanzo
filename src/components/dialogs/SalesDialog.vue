@@ -95,7 +95,7 @@
         <v-row dense>
           <v-col cols="4">
             <span class="span-sm-1">사건관리번호 </span>
-            <span class="span-sm-2">{{ caseData.casenum }}</span>
+            <span class="span-sm-2">{{ caseManageNum }}</span>
           </v-col>
           
           <v-col cols="3" offset="5">
@@ -135,7 +135,7 @@
 
         <v-row no-gutters>
           <v-col cols="4">
-            <input v-model="caseData.c_name" class="input-text" placeholder="">
+            <input v-model="caseData.applicant" class="input-text" placeholder="">
           </v-col>
         </v-row>
 
@@ -159,13 +159,13 @@
 
         <v-row no-gutters>
           <v-col cols="4">
-            <input v-model="caseData.c_phone" class="input-text" placeholder="010-0000-0000">
+            <input v-model="caseData.phone" class="input-text" placeholder="010-0000-0000">
           </v-col>
           <v-col cols="4">
-            <input v-model="caseData.c_inum" class="input-text" placeholder="000000-0000000">
+            <input v-model="caseData.inum" class="input-text" placeholder="000000-0000000">
           </v-col>
           <v-col cols="4">
-            <input v-model="caseData.c_email" class="input-text" placeholder="username@example.com">
+            <input v-model="caseData.email" class="input-text" placeholder="username@example.com">
           </v-col>
         </v-row>
 
@@ -178,7 +178,7 @@
         <v-row no-gutters>
           <v-col cols="9">
             <input 
-                v-model="caseData.c_address" 
+                v-model="caseData.address" 
                 style="width: 675px;" 
                 class="input-text" placeholder="">
           </v-col>
@@ -241,7 +241,7 @@
         </v-row>
         <v-row>
           <v-col cols="2">
-            <span style="color: #999999;">담당자: {{ caseData.manager }}</span>
+            <span style="color: #999999;">담당자: {{ manager }}</span>
           </v-col>
         </v-row>
       </div>
@@ -259,17 +259,21 @@
   import ErrorDialog from './ErrorDialog.vue';
   import PurchaseDialog from './PurchaseDialog.vue';
   import LoadingDialog from './LoadingDialog.vue';
-  import { CustomerInfo, FileInfo, Sales } from '@/interfaces/SalesInterface';
+  import { Case } from '@/interfaces/CaseInterface';
   import { salesApiStore } from '@/stores/salesApiStore';
   import { filesApiStore } from '@/stores/filesApiStore';
   import { Purchase } from '@/interfaces/PurchaseInterface';
   import { datetimeToyymmdd, datetimeToyymmddByDate, datetimeToyyyymmddByDate, getLastDayOfMonth, numToCommaString } from '@/composables/utils';
   import { PaymentInterface } from '@/interfaces/PaymentInterface';
   import { HistoryInterface } from '@/interfaces/HistoryInterface';
+  import { authApiStore } from '@/stores/authApiStore';
+
+  const authStore = authApiStore();
+  const { getManagerName, getManagerId } = authStore;
 
   // API store
   const apiStore = salesApiStore();
-  const { apiGetById, apiSaveSales, apiAddSalesHistory } = apiStore;
+  const { apiGetById, apiSaveCase, apiAddSalesHistory } = apiStore;
 
   const fApiStore = filesApiStore();
   const { apiUploadFile } = fApiStore;
@@ -292,18 +296,15 @@
     isBusiness.value = !isBusiness.value;
   };
 
-  const caseData = ref<Sales>({
-    gid: 0,
-    uid: 0,
-    saleser: '',
-    c_name: '',
-    c_phone: '',
-    c_address: '',
-    c_inum: '',
-    c_email: '',
+  const manager = getManagerName();
+  const caseManageNum = getManagerId();
+
+  const caseData = ref<Case>({
+    applicant: '',
+    phone: '',
+    address: '',
+    email: '',
     memo: '',
-    manager: '하헌일',
-    casenum: '2030_2939_1111'
   });
 
   const steps = ref([
@@ -343,33 +344,12 @@
     updated.value = false;
 
     caseData.value = {
-      gid: 0,
-      uid: 0,
-      saleser: '',
-      c_name: '',
-      c_phone: '',
-      c_address: '',
-      c_inum: '',
-      c_email: '',
+      applicant: '',
+      phone: '',
+      address: '',
+      email: '',
       memo: '',
-      manager: '하헌일',
-      casenum: '2030_2939_1111'
     };
-
-    purchaseData.value = [];
-
-    showCustomerDetail.value = false;
-    customerFile.value = null;
-    customerInfo.value = { name: '', bnum: '', ceo: '', btype: '', bkind: '', addr: '' };
-    customerFileInfo.value = { id: 0, gid: 0, uid: 0, fname: '' };
-
-    showPartnerDetail.value = false;
-    partnerFile.value = null;
-    partnerInfo.value = { name: '', bnum: '', ceo: '', btype: '', bkind: '', addr: '' };
-    partnerFileInfo.value = { id: 0, gid: 0, uid: 0, fname: '' };
-
-    historyList.value = [];
-    historyText.value = '';
   };
 
   // 화면 로딩
@@ -496,15 +476,15 @@
   };
 
   const checkInput = () => {
-    if (!caseData.value.c_name || caseData.value.c_name.length < 2) {
+    if (!caseData.value.applicant || caseData.value.applicant.length < 2) {
       errorTitle.value = '고객사명 입력필요';
       errorMsg.value = '2 글자 이상 입력해주세요.';
       showErrorDialog.value = true;
       return;
     }
-    if (caseData.value.s_path === 1 && (!caseData.value.p_name || caseData.value.p_name.length < 2)) {
-      errorTitle.value = '파트너명 입력필요';
-      errorMsg.value = '2 글자 이상 입력해주세요.';
+    if (!caseData.value.phone || caseData.value.phone.length < 11) {
+      errorTitle.value = '고객사명 전화번호 입력필요';
+      errorMsg.value = '11 글자 이상 입력해주세요.';
       showErrorDialog.value = true;
       return;
     } else if (caseData.value.s_path === 0) {
@@ -524,30 +504,22 @@
     emit('update', updated.value);
   };
 
-  const saveSalesData = async () => {
+  const saveCaseData = async () => {
     showConfirmDialog.value = false;
 
-    caseData.value.purchase = JSON.stringify(purchaseData.value);
-    if (caseData.value.s_btype === 1) {
-      caseData.value.b_data = JSON.stringify(payData.value);
-    }
-
     const sendData = {
-      sales: caseData.value,
-      cinfo: customerInfo.value,
-      cfile: customerFileInfo.value,
-      pinfo: partnerInfo.value,
-      pfile: partnerFileInfo.value,
+        "managerid": "dsshin",
+        "data": [caseData.value]
     };
 
     console.log(`sendData: ${JSON.stringify(sendData)}`);
-    const response = await apiSaveSales(sendData);
+    const response = await apiSaveCase(sendData);
     if (response.status !== 201) {
-      errorTitle.value = '영업관리 저장';
+      errorTitle.value = '사건관리 저장';
       errorMsg.value = '저장 중 문제가 발생했습니다.';
       showErrorDialog.value = true;
     } else {
-      infoTitle.value = '영업관리 저장';
+      infoTitle.value = '사건관리 저장';
       infoMsg.value = '저장이 완료되었습니다.';
       showInfoDialog.value = true;
 
@@ -631,13 +603,13 @@
 
   // Confirm Dialog
   const showConfirmDialog = ref<boolean>(false);
-  const confirmTitle = ref<string>('영업관리');
+  const confirmTitle = ref<string>('사건등록');
   const confirmMsg = ref<string>('진행할까요?');
   const closeConfirmDialog = (answer: boolean) => {
     if (answer) {
       if (showConfirmDialog.value) {
         showConfirmDialog.value = false;
-        saveSalesData();
+        saveCaseData();
       } else if (showPurchaseDeleteDialog.value) {
         showPurchaseDeleteDialog.value = false;
         deletePurchase();

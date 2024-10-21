@@ -5,7 +5,7 @@ import { authApiStore } from '@/stores/authApiStore';
 
 export const salesApiStore = defineStore('salesApiStore', () => {
   const authStore = authApiStore();
-  const { getToken, getGid, getUid, getName } = authStore;
+  const { getToken, getGid, getUid, getName, getManagerId } = authStore;
 
   const axiosConfig = {
     baseURL: import.meta.env.VITE_API_SERVER_URL,
@@ -33,8 +33,8 @@ export const salesApiStore = defineStore('salesApiStore', () => {
 
   const apiSalesList = async (query: string) => {
     try {
-      const gid = getGid();
-      const response = await salesAxios.get(`/sales/list/${gid}?${query}`);
+      const managerId = getManagerId();
+      const response = await salesAxios.get(`/case/list/${managerId}?${query}`);
       updateStatus(response);
     } catch (error) {
       const err = error as AxiosError;
@@ -59,9 +59,21 @@ export const salesApiStore = defineStore('salesApiStore', () => {
 
   const apiSaveSales = async (data: any) => {
     try {
-      data.sales.gid = getGid();
       data.sales.uid = getUid();
       const response = await salesAxios.post(`/sales/create`, data);
+      updateStatus(response);
+      console.log(response.data);
+    } catch (error) {
+      const err = error as AxiosError;
+      console.error('Error while apiSaveSales:', err);
+      updateStatus(err.response);
+    }
+    return salesApiResponse.value;
+  };
+
+  const apiSaveCase = async (data: any) => {
+    try {
+      const response = await salesAxios.post(`/case/list`, data);
       updateStatus(response);
       console.log(response.data);
     } catch (error) {
@@ -91,5 +103,6 @@ export const salesApiStore = defineStore('salesApiStore', () => {
     apiGetById,
     apiSaveSales,
     apiAddSalesHistory,
+    apiSaveCase,
   };
 });
