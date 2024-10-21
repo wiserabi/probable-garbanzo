@@ -255,6 +255,7 @@
   const selmanager = ref<string>(mname);
   watch(selmanager, () => {
     console.log(`selmanager ${selmanager.value}`);
+    managers.value = [mname];
   });
 
   // 영업단계 셀렉트박스
