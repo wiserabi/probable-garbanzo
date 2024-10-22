@@ -1,9 +1,8 @@
 <template>
   <SalesDialog
-    :name="name"
     :show="showSalesDialog"
-    :sid="salesId"
-    :username="userName"
+    :selectedCase="selectedCase"
+    :addNew="addNew"
     @update="closeDialog"
   />
 
@@ -23,7 +22,7 @@
     <v-row class="banner-container" dense>
       <v-col>
         <span class="banner-subtext">Home > 사건관리 > Main</span>
-        <button class="banner-button" @click="onRegist(0)"></button>
+        <button class="banner-button" @click="onRegist(-1)"></button>
       </v-col>
     </v-row>
     <div class="list-container">
@@ -198,6 +197,7 @@
   import SalesDialog from '@/components/dialogs/SalesDialog.vue';
   import ErrorDialog from '@/components/dialogs/ErrorDialog.vue';
   import LoadingDialog from '@/components/dialogs/LoadingDialog.vue';
+  import { Case } from '@/interfaces/CaseInterface';
 
   // API store
   const authStore = authApiStore();
@@ -250,6 +250,7 @@
   });
 
   const managers = ref<Array<string>>([mname]);
+  const selectedCase = ref<Case>({});
 
   // 담당자 셀렉트박스
   const selmanager = ref<string>(mname);
@@ -259,10 +260,6 @@
   });
 
   // Detail 다이얼로그
-  const salesId = ref<number>(0);
-  const groupId = ref<number>(0);
-  const userId = ref<number>(0);
-  const userName = ref<string>();
   const name = ref<string>();
   const showSalesDialog = ref<boolean>(false);
   const closeDialog = (update: boolean) => {
@@ -272,13 +269,24 @@
     }
   };
 
-  const onRegist = async (sid: number) => {
-    salesId.value = sid;
-    groupId.value = getGid();
-    userId.value = getUid();
-    userName.value = getUserName();
-    name.value = getName();
-    showSalesDialog.value = true;
+  const onRegist = async (index: number) => {
+    if (caseList.value && caseList.value[index]) {//기존 목록 업데이트
+      selectedCase.value = caseList.value[index];
+      addNew.value = false;
+      showSalesDialog.value = true;
+    }
+    else if(index == -1){//신규등록
+      selectedCase.value = {applicant: '',
+                            phone: '',
+                            address: '',
+                            email: '',
+                            memo: ''};
+      addNew.value = true;
+      showSalesDialog.value = true;
+    }
+    else {
+      console.error('Invalid case index or caseList is empty');
+    }
   };
 
   // 테이블
@@ -298,7 +306,8 @@
   ));
 
   const tableData = ref<any[]>([]);
-  const salesList = ref<any[]>();
+  const caseList = ref<Case[]>([]);
+  const addNew = ref<boolean>(false);
 
   // 데이터 조회
   const getList = async (search: boolean) => {
@@ -316,7 +325,8 @@
       errorMsg.value = '데이터를 가져오지 못했습니다.';
       showErrorDialog.value = true;
     } else {
-      salesList.value = response.data;
+      caseList.value = response.data;
+      // console.log("caseList", caseList.value);
       for (const item of response.data) {
         tableData.value.push({
           applicant: item.applicant,
@@ -349,8 +359,8 @@
 
   // 테이블 아이템 더블클릭
   const onItemDbClick = (index: number) => {
-    console.log(`onItemDbClick id: ${salesId.value}`);
-    onRegist(Number((salesList.value as any)[index].id));
+    // console.log(caseList.value[index]);
+    onRegist(index);
   };
 </script>
 

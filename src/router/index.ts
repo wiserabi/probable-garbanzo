@@ -18,9 +18,9 @@ const routes = [
     component: () => import('@/layouts/default/Default.vue'),
     children: [
       {
-        path: 'saleslist',
-        name: 'Sales List',
-        component: () => import('@/pages/SalesList.vue'),
+        path: 'caselist',
+        name: 'CaseList',
+        component: () => import('@/pages/CaseList.vue'),
       },
       {
         path: 'salesstatus',

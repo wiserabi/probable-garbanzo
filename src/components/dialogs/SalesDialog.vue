@@ -268,12 +268,13 @@
   import { HistoryInterface } from '@/interfaces/HistoryInterface';
   import { authApiStore } from '@/stores/authApiStore';
 
+
   const authStore = authApiStore();
   const { getManagerName, getManagerId } = authStore;
 
   // API store
   const apiStore = salesApiStore();
-  const { apiGetById, apiSaveCase, apiAddSalesHistory } = apiStore;
+  const { apiGetById, apiSaveCase, apiUpdateCase, apiAddSalesHistory } = apiStore;
 
   const fApiStore = filesApiStore();
   const { apiUploadFile } = fApiStore;
@@ -282,9 +283,8 @@
 
   const props = defineProps({
     show: Boolean,
-    sid: Number,
-    username: String,
-    name: String,
+    selectedCase: {} | null,
+    addNew: Boolean
   });
 
   const emit = defineEmits<{(e: 'update', value: boolean): void}>();
@@ -297,7 +297,8 @@
   };
 
   const manager = getManagerName();
-  const caseManageNum = getManagerId();
+  const currentYear: string = new Date().getFullYear().toString();
+  const caseManageNum = ref<string>('');
 
   const caseData = ref<Case>({
     applicant: '',
@@ -343,13 +344,13 @@
   const initData = () => {
     updated.value = false;
 
-    caseData.value = {
-      applicant: '',
-      phone: '',
-      address: '',
-      email: '',
-      memo: '',
-    };
+    caseData.value = props.selectedCase;
+    if(caseData.value.case_seq){
+      caseManageNum.value = currentYear + "-" + getManagerId() + "-" + caseData.value.case_seq;
+    }
+    else{
+      caseManageNum.value = currentYear + "-" + getManagerId() + "-";
+    }
   };
 
   // 화면 로딩
@@ -513,8 +514,16 @@
     };
 
     console.log(`sendData: ${JSON.stringify(sendData)}`);
-    const response = await apiSaveCase(sendData);
-    if (response.status !== 201) {
+
+    let response = null;
+    if (addNew.value){
+      response = await apiSaveCase(sendData);
+    }
+    else{
+      response = await apiUpdateCase(sendData);
+    }
+
+    if (!response || response.status !== 201) {
       errorTitle.value = '사건관리 저장';
       errorMsg.value = '저장 중 문제가 발생했습니다.';
       showErrorDialog.value = true;

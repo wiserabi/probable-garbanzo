@@ -57,10 +57,9 @@ export const salesApiStore = defineStore('salesApiStore', () => {
     return salesApiResponse.value;
   };
 
-  const apiSaveSales = async (data: any) => {
+  const apiSaveCase = async (data: any) => {
     try {
-      data.sales.uid = getUid();
-      const response = await salesAxios.post(`/sales/create`, data);
+      const response = await salesAxios.post(`/case/list`, data);
       updateStatus(response);
       console.log(response.data);
     } catch (error) {
@@ -71,9 +70,9 @@ export const salesApiStore = defineStore('salesApiStore', () => {
     return salesApiResponse.value;
   };
 
-  const apiSaveCase = async (data: any) => {
+  const apiUpdateCase = async (data: any) => {
     try {
-      const response = await salesAxios.post(`/case/list`, data);
+      const response = await salesAxios.post(`/case/list/update`, data);
       updateStatus(response);
       console.log(response.data);
     } catch (error) {
@@ -101,8 +100,8 @@ export const salesApiStore = defineStore('salesApiStore', () => {
   return {
     apiCaseList,
     apiGetById,
-    apiSaveSales,
     apiAddSalesHistory,
     apiSaveCase,
+    apiUpdateCase,
   };
 });

@@ -85,7 +85,7 @@
   const menuList = ref<{text: string, to: string, icon: string}[]>(
     [
       { text: '통계', to: '/salesstatus', icon: 'mdi-tune-variant' },
-      { text: '사건관리', to: '/saleslist', icon: 'mdi-view-grid' },
+      { text: '사건관리', to: '/caselist', icon: 'mdi-view-grid' },
       // { text: '정산관리', to: '/', icon: 'mdi-percent-box' },
       // { text: '거래처 관리', to: '/', icon: 'mdi-account-box' },
       // { text: '설정', to: '/', icon: 'mdi-cog' },
