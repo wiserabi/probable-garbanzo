@@ -34,7 +34,7 @@ export const salesApiStore = defineStore('salesApiStore', () => {
   const apiCaseList = async (query: string) => {
     try {
       const managerId = getManagerId();
-      const response = await salesAxios.get(`/case/list/${managerId}?${query}`);
+      const response = await salesAxios.get(`/caselist/${managerId}?${query}`);
       updateStatus(response);
     } catch (error) {
       const err = error as AxiosError;
@@ -59,7 +59,7 @@ export const salesApiStore = defineStore('salesApiStore', () => {
 
   const apiSaveCase = async (data: any) => {
     try {
-      const response = await salesAxios.post(`/case/list`, data);
+      const response = await salesAxios.post(`/caselist/add`, data);
       updateStatus(response);
       console.log(response.data);
     } catch (error) {
@@ -72,7 +72,7 @@ export const salesApiStore = defineStore('salesApiStore', () => {
 
   const apiUpdateCase = async (data: any) => {
     try {
-      const response = await salesAxios.post(`/case/list/update`, data);
+      const response = await salesAxios.post(`/caselist/update`, data);
       updateStatus(response);
       console.log(response.data);
     } catch (error) {

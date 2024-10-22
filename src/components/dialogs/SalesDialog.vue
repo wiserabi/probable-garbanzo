@@ -352,6 +352,10 @@
     else{
       caseManageNum.value = currentYear + "-" + getManagerId() + "-" + (props.maxCaseSeq + 1).toString();
     }
+
+    if(caseData.value.business){
+      isBusiness.value = caseData.value.business;
+    }
   };
 
   // 화면 로딩
@@ -517,7 +521,7 @@
     console.log(`sendData: ${JSON.stringify(sendData)}`);
 
     let response = null;
-    if (addNew.value){
+    if (props.addNew){
       response = await apiSaveCase(sendData);
     }
     else{
