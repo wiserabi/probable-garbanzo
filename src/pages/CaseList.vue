@@ -89,7 +89,7 @@
       <div class="tcount-container">
         <v-row align="start" class="ml-2" dense justify="start">
           <v-col style="background-color: #EEEEEE; border-radius: 4px;" cols="1">
-            <span style="color: #777777;">TOTAL {{ tableData?.length }}</span>
+            <span style="color: #777777;">TOTAL {{ total }}</span>
           </v-col>
           <v-col offset="9">
             <v-btn
@@ -162,11 +162,12 @@
             <v-btn
               border
               class="ml-2"
-              :disabled="page === 1 || page >= pages"
+              :disabled="page === 1"
               flat
               icon="mdi-chevron-left"
               rounded="0"
               size="small"
+              @click="prevPage()"
             />
             <v-btn
               border
@@ -176,6 +177,7 @@
               icon="mdi-chevron-right"
               rounded="0"
               size="small"
+              @click="nextPage()"
             />
           </v-col>
         </v-row>
@@ -311,6 +313,23 @@
   const caseList = ref<Case[]>([]);
   const addNew = ref<boolean>(false);
   const maxCaseSeq = ref<number>(0);
+  const total = ref<number>(0);
+
+  const nextPage = async () => {
+    if (page.value < pages.value) {
+      page.value++;
+      offset.value = (page.value - 1) * Number(selCount.value);
+      await getList(false);
+    }
+  };
+
+  const prevPage = async () => {
+    if (page.value > 1) {
+      page.value--;
+      offset.value = (page.value - 1) * Number(selCount.value);
+      await getList(false);
+    }
+  };
 
   // 데이터 조회
   const getList = async (search: boolean) => {
@@ -328,11 +347,12 @@
       errorMsg.value = '데이터를 가져오지 못했습니다.';
       showErrorDialog.value = true;
     } else {
-      caseList.value = response.data;
+      // console.log(response.data)
+      caseList.value = response.data.data;
       maxCaseSeq.value = Math.max(...caseList.value.map(item => item.case_seq || 0));
 
       // console.log("caseList", caseList.value);
-      for (const item of response.data) {
+      for (const item of response.data.data) {
         tableData.value.push({
           applicant: item.applicant,
           phone: item.phone,
@@ -346,7 +366,8 @@
           mname: getManagerName()
         });
       }
-      pages.value = Math.ceil(tableData.value.length / Number(selCount.value));
+      total.value = response.data.total;
+      pages.value = Math.ceil(total.value / Number(selCount.value));
     }
     showLoadingDialog.value = false;
   };
