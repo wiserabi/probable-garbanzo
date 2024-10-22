@@ -3,6 +3,7 @@
     :show="showSalesDialog"
     :selectedCase="selectedCase"
     :addNew="addNew"
+    :maxCaseSeq="maxCaseSeq"
     @update="closeDialog"
   />
 
@@ -308,6 +309,7 @@
   const tableData = ref<any[]>([]);
   const caseList = ref<Case[]>([]);
   const addNew = ref<boolean>(false);
+  const maxCaseSeq = ref<number>(0);
 
   // 데이터 조회
   const getList = async (search: boolean) => {
@@ -326,6 +328,8 @@
       showErrorDialog.value = true;
     } else {
       caseList.value = response.data;
+      maxCaseSeq.value = Math.max(...caseList.value.map(item => item.case_seq || 0));
+
       // console.log("caseList", caseList.value);
       for (const item of response.data) {
         tableData.value.push({

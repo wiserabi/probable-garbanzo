@@ -284,7 +284,8 @@
   const props = defineProps({
     show: Boolean,
     selectedCase: {} | null,
-    addNew: Boolean
+    addNew: Boolean,
+    maxCaseSeq: Number,
   });
 
   const emit = defineEmits<{(e: 'update', value: boolean): void}>();
@@ -349,7 +350,7 @@
       caseManageNum.value = currentYear + "-" + getManagerId() + "-" + caseData.value.case_seq;
     }
     else{
-      caseManageNum.value = currentYear + "-" + getManagerId() + "-";
+      caseManageNum.value = currentYear + "-" + getManagerId() + "-" + (props.maxCaseSeq + 1).toString();
     }
   };
 
