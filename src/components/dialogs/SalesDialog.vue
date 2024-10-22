@@ -101,24 +101,24 @@
           <v-col cols="3" offset="5">
             <div class="inner-shadow-wrapper">
               <v-btn
-                :color="!isBusiness ? '#0048B2' : '#FFFFFF'"
+                :color="!caseData.business ? '#0048B2' : '#FFFFFF'"
                 height="36px"
                 width="62px"
                 @click="toggleType"
                 flat
                 outlined
               >
-                <span :class="!isBusiness ? 'text-white' : 'text-business'">개인</span>
+                <span :class="!caseData.business ? 'text-white' : 'text-business'">개인</span>
               </v-btn>
               <v-btn
-                :color="isBusiness ? '#0048B2' : '#FFFFFF'"
+                :color="caseData.business ? '#0048B2' : '#FFFFFF'"
                 height="36px"
                 width="77px"
                 @click="toggleType"
                 flat
                 outlined
               >
-                <span :class="isBusiness ? 'text-white' : 'text-business'">사업자</span>
+                <span :class="caseData.business ? 'text-white' : 'text-business'">사업자</span>
               </v-btn>
             </div>
           </v-col>
@@ -230,6 +230,7 @@
           </v-btn>-->
           <v-col align="end">
             <v-btn
+              v-if="props.addNew"
               class="btn-save"
               color="#0048B2"
               flat
@@ -274,7 +275,7 @@
 
   // API store
   const apiStore = salesApiStore();
-  const { apiGetById, apiSaveCase, apiUpdateCase, apiAddSalesHistory } = apiStore;
+  const { apiGetById, apiSaveCase, apiAddSalesHistory } = apiStore;
 
   const fApiStore = filesApiStore();
   const { apiUploadFile } = fApiStore;
@@ -290,11 +291,9 @@
 
   const emit = defineEmits<{(e: 'update', value: boolean): void}>();
 
-  const isBusiness = ref<boolean>(true); // true for 사업자, false for 개인
-
   // Function to toggle between 사업자 and 개인
   const toggleType = () => {
-    isBusiness.value = !isBusiness.value;
+    caseData.value.business = !caseData.value.business;
   };
 
   const manager = getManagerName();
@@ -307,6 +306,7 @@
     address: '',
     email: '',
     memo: '',
+    business: 0
   });
 
   const steps = ref([
@@ -351,10 +351,6 @@
     }
     else{
       caseManageNum.value = currentYear + "-" + getManagerId() + "-" + (props.maxCaseSeq + 1).toString();
-    }
-
-    if(caseData.value.business){
-      isBusiness.value = caseData.value.business;
     }
   };
 
@@ -520,13 +516,7 @@
 
     console.log(`sendData: ${JSON.stringify(sendData)}`);
 
-    let response = null;
-    if (props.addNew){
-      response = await apiSaveCase(sendData);
-    }
-    else{
-      response = await apiUpdateCase(sendData);
-    }
+    const response = await apiSaveCase(sendData);
 
     if (!response || response.status !== 201) {
       errorTitle.value = '사건관리 저장';

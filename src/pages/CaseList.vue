@@ -281,7 +281,8 @@
                             phone: '',
                             address: '',
                             email: '',
-                            memo: ''};
+                            memo: '',
+                            business: 0};
       addNew.value = true;
       showSalesDialog.value = true;
     }
