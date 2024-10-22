@@ -31,14 +31,14 @@ export const salesApiStore = defineStore('salesApiStore', () => {
     }
   );
 
-  const apiSalesList = async (query: string) => {
+  const apiCaseList = async (query: string) => {
     try {
       const managerId = getManagerId();
       const response = await salesAxios.get(`/case/list/${managerId}?${query}`);
       updateStatus(response);
     } catch (error) {
       const err = error as AxiosError;
-      console.error('Error while apiSalesList:', err);
+      console.error('Error while apiCaseList:', err);
       updateStatus(err.response);
     }
     return salesApiResponse.value;
@@ -99,7 +99,7 @@ export const salesApiStore = defineStore('salesApiStore', () => {
   };
 
   return {
-    apiSalesList,
+    apiCaseList,
     apiGetById,
     apiSaveSales,
     apiAddSalesHistory,

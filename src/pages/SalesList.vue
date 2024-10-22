@@ -204,7 +204,7 @@
   const { getGid, getUid, getUserName, getName, getManagerName } = authStore;
 
   const apiStore = salesApiStore();
-  const { apiSalesList } = apiStore;
+  const { apiCaseList } = apiStore;
 
   // 검색
   const searchText = ref<string>('');
@@ -258,12 +258,6 @@
     managers.value = [mname];
   });
 
-  // 영업단계 셀렉트박스
-  const selectedStep = ref<string>('100');
-  watch(selectedStep, () => {
-    console.log(`selectedStep ${selectedStep.value}`);
-  });
-
   // Detail 다이얼로그
   const salesId = ref<number>(0);
   const groupId = ref<number>(0);
@@ -313,10 +307,10 @@
 
     let query = `start=${offset.value}&count=${selCount.value}`;
     if (search) {
-      query += `&search=${searchText.value}&sdate=${sDate.value}&edate=${eDate.value}&step=${selectedStep.value}`;
+      query += `&search=${searchText.value}&sdate=${sDate.value}&edate=${eDate.value}`;
     }
 
-    const response = await apiSalesList(query);
+    const response = await apiCaseList(query);
     if (!response || response.status !== 200) {
       errorTitle.value = '데이터 조회 실패';
       errorMsg.value = '데이터를 가져오지 못했습니다.';
