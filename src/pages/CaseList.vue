@@ -5,6 +5,7 @@
     :addNew="addNew"
     :maxCaseSeq="maxCaseSeq"
     @update="closeDialog"
+    @close="closeCaseDialog"
   />
 
   <ErrorDialog
@@ -270,6 +271,10 @@
     if (update) {
       getList(false);
     }
+  };
+
+  const closeCaseDialog = () => {
+    showSalesDialog.value = false;
   };
 
   const onRegist = async (index: number) => {

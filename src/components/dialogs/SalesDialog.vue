@@ -289,7 +289,10 @@
     maxCaseSeq: Number,
   });
 
-  const emit = defineEmits<{(e: 'update', value: boolean): void}>();
+  const emit = defineEmits<{
+    (e: 'update', value: boolean): void
+    (e: 'close'): void
+  }>();
 
   // Function to toggle between 사업자 and 개인
   const toggleType = () => {
@@ -533,6 +536,8 @@
         caseData.value = response.data;
         console.log(`Saved ID: ${caseData.value.id}`);
       }
+
+      emit('close');
     }
   };
 

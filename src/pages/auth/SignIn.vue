@@ -111,7 +111,7 @@
 
     showLoadingDialog.value = false;
     if (response && response.status === 201) {
-      router.push('/saleslist');
+      router.push('/caselist');
     } else {
       infoMsg.value = '로그인 중 에러가 발생하였습니다.';
       showInfoDialog.value = true;
