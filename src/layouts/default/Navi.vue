@@ -97,7 +97,7 @@
     return '이강 법률사무소';
   };
 
-  const selectedMenuIndex = ref<number>(0);
+  const selectedMenuIndex = ref<number>(1);
 
   const onMenuSelect = (index: number) => {
     console.log(`onMenuSelect: ${menuList.value[index].text}`);
