@@ -205,7 +205,7 @@
 
   // API store
   const authStore = authApiStore();
-  const { getGid, getUid, getUserName, getName, getManagerName } = authStore;
+  const { getManagerName } = authStore;
 
   const apiStore = salesApiStore();
   const { apiCaseList } = apiStore;
@@ -254,7 +254,15 @@
   });
 
   const managers = ref<Array<string>>([mname]);
-  const selectedCase = ref<Case>({});
+  const defaultCase = {case_seq: '',
+                      managerid: '',
+                      applicant: '',
+                      phone: '',
+                      address: '',
+                      email: '',
+                      memo: '',
+                      business: 0};
+  const selectedCase = ref<Case>(JSON.parse(JSON.stringify(defaultCase)));
 
   // 담당자 셀렉트박스
   const selmanager = ref<string>(mname);
@@ -264,7 +272,6 @@
   });
 
   // Detail 다이얼로그
-  const name = ref<string>();
   const showSalesDialog = ref<boolean>(false);
   const closeDialog = (update: boolean) => {
     showSalesDialog.value = false;
@@ -284,12 +291,7 @@
       showSalesDialog.value = true;
     }
     else if(index == -1){//신규등록
-      selectedCase.value = {applicant: '',
-                            phone: '',
-                            address: '',
-                            email: '',
-                            memo: '',
-                            business: 0};
+      selectedCase.value = JSON.parse(JSON.stringify(defaultCase));
       addNew.value = true;
       showSalesDialog.value = true;
     }
@@ -354,7 +356,7 @@
     } else {
       // console.log(response.data)
       caseList.value = response.data.data;
-      maxCaseSeq.value = Math.max(...caseList.value.map(item => item.case_seq || 0));
+      maxCaseSeq.value = Math.max(...caseList.value.map(item => Number(item.case_seq) || 0));
 
       // console.log("caseList", caseList.value);
       for (const item of response.data.data) {

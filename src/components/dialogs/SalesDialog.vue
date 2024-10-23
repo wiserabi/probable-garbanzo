@@ -2,7 +2,7 @@
 <template>
   <ConfirmDialog
     :message="confirmMsg"
-    :show="showConfirmDialog || showPurchaseDeleteDialog"
+    :show="showConfirmDialog"
     :title="confirmTitle"
     @close="closeConfirmDialog"
   />
@@ -19,15 +19,6 @@
     :show="showErrorDialog"
     :title="errorTitle"
     @close="closeErrorDialog"
-  />
-
-  <PurchaseDialog
-    :name="props.name"
-    :pdata="purchaseData[selectedPurchaseIndex]"
-    :show="showPurchaseDialog"
-    @close="closePurchaseDialog"
-    @create="createPurchase"
-    @update="updatePurchase"
   />
 
   <LoadingDialog
@@ -251,40 +242,31 @@
 </template>
 
 <script setup lang="ts">
-  import FlatPickr from 'vue-flatpickr-component';
   import 'flatpickr/dist/flatpickr.css';
-  import { CustomLocale } from 'flatpickr/dist/types/locale';
-  import { Korean } from 'flatpickr/dist/l10n/ko';
+  // import { CustomLocale } from 'flatpickr/dist/types/locale';
+  // import { Korean } from 'flatpickr/dist/l10n/ko';
   import ConfirmDialog from '@/components/dialogs/ConfirmDialog.vue';
   import InfoDialog from './InfoDialog.vue';
   import ErrorDialog from './ErrorDialog.vue';
-  import PurchaseDialog from './PurchaseDialog.vue';
   import LoadingDialog from './LoadingDialog.vue';
   import { Case } from '@/interfaces/CaseInterface';
   import { salesApiStore } from '@/stores/salesApiStore';
-  import { filesApiStore } from '@/stores/filesApiStore';
-  import { Purchase } from '@/interfaces/PurchaseInterface';
-  import { datetimeToyymmdd, datetimeToyymmddByDate, datetimeToyyyymmddByDate, getLastDayOfMonth, numToCommaString } from '@/composables/utils';
-  import { PaymentInterface } from '@/interfaces/PaymentInterface';
-  import { HistoryInterface } from '@/interfaces/HistoryInterface';
+  // import { datetimeToyymmdd, datetimeToyymmddByDate, datetimeToyyyymmddByDate, getLastDayOfMonth, numToCommaString } from '@/composables/utils';
   import { authApiStore } from '@/stores/authApiStore';
-
 
   const authStore = authApiStore();
   const { getManagerName, getManagerId } = authStore;
 
   // API store
   const apiStore = salesApiStore();
-  const { apiGetById, apiSaveCase, apiAddSalesHistory } = apiStore;
-
-  const fApiStore = filesApiStore();
-  const { apiUploadFile } = fApiStore;
-
-  const fpConfig = ref<{dateFormat: string, locale: CustomLocale}>({ dateFormat: 'Y.m.d', locale: Korean });
+  const { apiSaveCase } = apiStore;
 
   const props = defineProps({
     show: Boolean,
-    selectedCase: {} | null,
+    selectedCase: {
+      type: Object as PropType<Case | null>,
+      default: null
+    },
     addNew: Boolean,
     maxCaseSeq: Number,
   });
@@ -296,189 +278,48 @@
 
   // Function to toggle between 사업자 and 개인
   const toggleType = () => {
-    caseData.value.business = !caseData.value.business;
+    caseData.value.business = caseData.value.business ? 0 : 1;
   };
 
   const manager = getManagerName();
   const currentYear: string = new Date().getFullYear().toString();
   const caseManageNum = ref<string>('');
 
-  const caseData = ref<Case>({
-    applicant: '',
-    phone: '',
-    address: '',
-    email: '',
-    memo: '',
-    business: 0
-  });
-
-  const steps = ref([
-    { text: '20%', desc: '계약전 정보등록이 완료된 상태' },
-    { text: '40%', desc: '계약 완료 상태' },
-    { text: '60%', desc: '원가 계산이 완료된 상태' },
-    { text: '80%', desc: '발주서가 접수되어 납품 예정인 상태' },
-    { text: '100%', desc: '영업이 완료되어 계산서 발행이 필요한 상태' },
-    { text: '계산서 발행 완료', desc: '정산이 필요한 상태' },
-  ]);
-
-  // 사업자 정보
-  const showCustomerDetail = ref<boolean>(false);
-  const customerInfo = ref<CustomerInfo>({ name: '', bnum: '', ceo: '', btype: '', bkind: '', addr: '' });
-  const customerFileInfo = ref<FileInfo>({ id: 0, gid: 0, uid: 0, fname: '' });
-
-  // 파트너 정보
-  const showPartnerDetail = ref<boolean>(false);
-  const partnerInfo = ref<CustomerInfo>({ name: '', bnum: '', ceo: '', btype: '', bkind: '', addr: '' });
-  const partnerFileInfo = ref<FileInfo>({ id: 0, gid: 0, uid: 0, fname: '' });
-
-  // 매입 테이블
-  const purchaseHeaders = ref<Record <string, {name: string, width: string}>>((
-    {
-      code: { name: '매입처코드', width: '13%' },
-      name: { name: '매출처', width: '14%' },
-      detail: { name: '건명', width: '37%' },
-      amnt: { name: '금액', width: '18%' },
-      updatedAt: { name: 'CTR', width: '18%' },
-    }
-  ));
-
-  const purchaseData = ref<Purchase []>([]);
-  const selectedPurchaseIndex = ref<number>(-1);
+  const defaultCase = {case_seq: '',
+                      managerid: '',
+                      applicant: '',
+                      phone: '',
+                      address: '',
+                      email: '',
+                      memo: '',
+                      business: 0};
+  const caseData = ref<Case>(JSON.parse(JSON.stringify(defaultCase)));
 
   const initData = () => {
     updated.value = false;
 
-    caseData.value = props.selectedCase;
+    if (props.selectedCase) {
+      caseData.value = { ...props.selectedCase };
+    } else {
+      // Reset to default values if no case is selected
+      caseData.value = JSON.parse(JSON.stringify(defaultCase));
+    }
+
     if(caseData.value.case_seq){
       caseManageNum.value = currentYear + "-" + getManagerId() + "-" + caseData.value.case_seq;
     }
-    else{
+    else if(props.maxCaseSeq){
       caseManageNum.value = currentYear + "-" + getManagerId() + "-" + (props.maxCaseSeq + 1).toString();
     }
   };
 
   // 화면 로딩
   watch(() => props.show, async (newFlag, oldFlag) => {
-    console.log(`SalesDialog watch props.show: ${oldFlag} -> ${newFlag}`);
+    console.log(`CaseDialog watch props.show: ${oldFlag} -> ${newFlag}`);
     if (newFlag && !oldFlag) {
       initData();
-
-      if (props.sid) {
-        console.log(`onUpdated caseData.value.id: props.sid: ${props.sid}`);
-
-        const response = await apiGetById(props.sid);
-        if (response.status !== 200) {
-          errorTitle.value = '데이터 가져오기 실패';
-          errorMsg.value = '데이터 조회 중 문제가 발생했습니다.';
-          showErrorDialog.value = true;
-        } else {
-          caseData.value = response.data.sales;
-          selectedStep.value = caseData.value.s_step.toString();
-          if (caseData.value?.purchase) {
-            purchaseData.value = JSON.parse(caseData.value.purchase);
-            calcCost();
-            // console.log(`purchaseData: ${caseData.value.purchase}`);
-          }
-          console.log(caseData.value);
-
-          // 고객정보
-          if (response.data.cinfo) {
-            customerInfo.value = response.data.cinfo;
-            if (customerInfo.value.fileid) {
-              customerFileInfo.value = response.data.cfile;
-            }
-          }
-
-          // 파트너정보
-          if (caseData.value.s_path === 1 && response.data.pinfo) {
-            partnerInfo.value = response.data.pinfo;
-            if (partnerInfo.value.fileid) {
-              partnerFileInfo.value = response.data.pfile;
-            }
-          }
-
-          // 히스토리
-          if (response.data.history) {
-            historyList.value = response.data.history;
-          }
-        }
-      } else {
-        initData();
-      }
     }
   });
-
-  // 이익 계산
-  const calcProfit = computed<number>(() => {
-    if (caseData.value && caseData.value.s_amnt >= caseData.value.s_cost) {
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      caseData.value.s_profit = caseData.value.s_amnt - caseData.value.s_cost;
-    }
-    return caseData.value.s_profit;
-  });
-
-  // 과금 데이터
-  const payData = computed<PaymentInterface []>(() => {
-    const data: PaymentInterface[] = [];
-
-    if (!caseData.value.b_start || !caseData.value.b_end) {
-      return data;
-    }
-
-    const dt = new Date(caseData.value.b_start);
-    const end = new Date(caseData.value.b_end);
-    const cycle = Number(caseData.value.b_cycle);
-    const bDay = Number(caseData.value.b_day);
-
-    const curDay = dt.getDate();
-    const firstDay = bDay === 0 ? getLastDayOfMonth(dt) : bDay;
-    // 현재 날짜가 첫 결제일을 지났을때
-    if (curDay > firstDay) {
-      dt.setDate(1); // 31일이 없는 달로 바로 셋팅 할 경우 추가로 한달이 늘어나는 것 방지.
-      dt.setMonth(dt.getMonth() + cycle); // +1 월
-    }
-
-    while (dt.getTime() < end.getTime()) {
-      if (bDay === 0) {
-        const lday = getLastDayOfMonth(dt);
-        dt.setDate(lday);
-      } else {
-        dt.setDate(bDay);
-      }
-      if (dt.getTime() > end.getTime()) break;
-      data.push({ date: datetimeToyyyymmddByDate(dt), amnt: 0 });
-      dt.setDate(1);
-      dt.setMonth(dt.getMonth() + cycle);
-    }
-
-    // 월 요금 계산
-    const count = data.length;
-    const monthly = Math.floor(caseData.value.s_amnt / count);
-    let sum = 0;
-    for (const item of data) {
-      item.amnt = monthly;
-      sum += monthly;
-    }
-    // 나머지 금액 첫달에 합산
-    const diff = caseData.value.s_amnt - sum;
-    if (diff !== 0) {
-      data[0].amnt += diff;
-    }
-    return data;
-  });
-
-  const setSalesPath = (spath: number) => {
-    caseData.value.s_path = spath;
-  };
-
-  const setBType = (btype: number) => {
-    caseData.value.s_btype = btype;
-  };
-
-  const selectedStep = ref<string>('0');
-  const setSalesStep = () => {
-    caseData.value.s_step = Number(selectedStep.value);
-  };
 
   const checkInput = () => {
     if (!caseData.value.applicant || caseData.value.applicant.length < 2) {
@@ -492,11 +333,7 @@
       errorMsg.value = '11 글자 이상 입력해주세요.';
       showErrorDialog.value = true;
       return;
-    } else if (caseData.value.s_path === 0) {
-      caseData.value.p_name = '직접';
     }
-
-    caseData.value.saleser = props.username;
 
     confirmTitle.value = '신규 사건 등록';
     confirmMsg.value = '입력된 정보를 저장하고 신규로 등록하시겠습니까?';
@@ -505,7 +342,6 @@
 
   const updated = ref<boolean>(false);
   const closeDialog = () => {
-    caseData.value.id = 0; // 다시 열었을때 data를 다시 불러오기 위해.
     emit('update', updated.value);
   };
 
@@ -534,76 +370,10 @@
 
       if (response.data && response.data.id) {
         caseData.value = response.data;
-        console.log(`Saved ID: ${caseData.value.id}`);
+        console.log(`Saved ID: ${caseData.value.case_seq}`);
       }
 
       emit('close');
-    }
-  };
-
-  // 고객사 파일 입력
-  const customerFileInput = ref<HTMLInputElement | null>(null);
-  const customerFile = ref<File | null>(null);
-
-  const triggerFileInput = () => {
-    if (customerFileInput.value) {
-      customerFileInput.value.click();
-    }
-  };
-
-  const handleFileUpload = async (event: Event) => {
-    const target = event.target as HTMLInputElement;
-    if (target.files && target.files.length > 0) {
-      showLoadingDialog.value = true;
-
-      customerFile.value = target.files[0];
-
-      const response = await apiUploadFile(customerFile.value, 'bizlicense');
-
-      showLoadingDialog.value = false;
-
-      console.log(response);
-      customerInfo.value = response.data.bizInfo;
-      customerFileInfo.value = response.data.fileInfo;
-    }
-  };
-
-  // 파트너 파일 입력
-  const partnerFileInput = ref<HTMLInputElement | null>(null);
-  const partnerFile = ref<File | null>(null);
-
-  const triggerPartFileInput = () => {
-    if (partnerFileInput.value) {
-      partnerFileInput.value.click();
-    }
-  };
-
-  const handlePartFileUpload = async (event: Event) => {
-    const target = event.target as HTMLInputElement;
-    if (target.files && target.files.length > 0) {
-      showLoadingDialog.value = true;
-
-      partnerFile.value = target.files[0];
-
-      const response = await apiUploadFile(partnerFile.value, 'partlicense');
-
-      showLoadingDialog.value = false;
-
-      console.log(response);
-      partnerInfo.value = response.data.bizInfo;
-      partnerFileInfo.value = response.data.fileInfo;
-    }
-  };
-
-  // 히스토리
-  const historyList = ref<HistoryInterface[]>([]);
-  const historyText = ref<string>();
-  const AddHistory = async () => {
-    if (historyText.value) {
-      const result = await apiAddSalesHistory(Number(caseData.value.id), historyText.value);
-      if (result.status === 201 && result.data) {
-        historyList.value.push(result.data);
-      }
     }
   };
 
@@ -615,16 +385,11 @@
   const confirmTitle = ref<string>('사건등록');
   const confirmMsg = ref<string>('진행할까요?');
   const closeConfirmDialog = (answer: boolean) => {
-    if (answer) {
-      if (showConfirmDialog.value) {
-        showConfirmDialog.value = false;
-        saveCaseData();
-      } else if (showPurchaseDeleteDialog.value) {
-        showPurchaseDeleteDialog.value = false;
-        deletePurchase();
-      }
+    if (answer && showConfirmDialog.value) {
+      showConfirmDialog.value = false;
+      saveCaseData();
     } else {
-      showConfirmDialog.value = showPurchaseDeleteDialog.value = false;
+      showConfirmDialog.value =  false;
     }
   };
 
@@ -642,57 +407,6 @@
   const errorMsg = ref<string>('저장 중 문제가 발생했습니다.');
   const closeErrorDialog = () => {
     showErrorDialog.value = false;
-  };
-
-  // Purchase Dialog
-  const calcCost = () => {
-    caseData.value.s_cost = 0;
-    for (const p of purchaseData.value) {
-      caseData.value.s_cost += Number(p.amnt);
-    }
-  };
-
-  const showPurchaseDialog = ref<boolean>(false);
-  const showPurchaseDeleteDialog = ref<boolean>(false);
-
-  const createPurchase = (pData: Purchase) => {
-    updated.value = true;
-    showPurchaseDialog.value = false;
-    purchaseData.value.push(pData);
-    calcCost();
-  };
-
-  const deletePurchase = () => {
-    console.log(`updatePurchase: ${JSON.stringify(purchaseData.value[selectedPurchaseIndex.value])}`);
-    purchaseData.value.splice(selectedPurchaseIndex.value, 1);
-    selectedPurchaseIndex.value = -1;
-  };
-
-  const updatePurchase = (pData: Purchase) => {
-    console.log(`updatePurchase: ${JSON.stringify(pData)}`);
-    updated.value = true;
-    showPurchaseDialog.value = false;
-    purchaseData.value[selectedPurchaseIndex.value] = pData;
-    calcCost();
-  };
-
-  const closePurchaseDialog = () => {
-    showPurchaseDialog.value = false;
-  };
-
-  const onCreatePurchase = () => {
-    selectedPurchaseIndex.value = -1;
-    showPurchaseDialog.value = true;
-  };
-  const onModifyPurchase = (index: number) => {
-    selectedPurchaseIndex.value = index;
-    showPurchaseDialog.value = true;
-  };
-  const onDeletePurchase = (index: number) => {
-    selectedPurchaseIndex.value = index;
-    confirmTitle.value = '매입 정보 삭제';
-    confirmMsg.value = '선택하신 매입 정보를 삭제할까요?';
-    showPurchaseDeleteDialog.value = true;
   };
 </script>
 

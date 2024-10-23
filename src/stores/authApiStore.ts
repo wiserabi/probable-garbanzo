@@ -55,11 +55,6 @@ export const authApiStore = defineStore('authApiStore', () => {
     localStorage.setItem('tokenInfo', JSON.stringify(tokenInfo.value));
   };
 
-  const updateUserInfo = (info: IUserInfo) => {
-    userInfo.value = info;
-    localStorage.setItem('userInfo', JSON.stringify(userInfo.value));
-  };
-
   const getToken = () => {
     return apiToken.value;
   };

@@ -67,7 +67,7 @@
 
   // API store
   const apiStore = authApiStore();
-  const { getName, loadAuthInfo, apiVerifyToken, getManagerName } = apiStore;
+  const { loadAuthInfo, apiVerifyToken, getManagerName } = apiStore;
 
   onMounted(async () => {
     // Get default infos
@@ -81,6 +81,10 @@
       router.push('/auth/SignIn');
     }
   });
+
+  const onSearch = () => {
+    console.log("This is dummy function");
+  };
 
   const menuList = ref<{text: string, to: string, icon: string}[]>(
     [

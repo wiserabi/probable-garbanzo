@@ -5,7 +5,7 @@ import { authApiStore } from '@/stores/authApiStore';
 
 export const salesApiStore = defineStore('salesApiStore', () => {
   const authStore = authApiStore();
-  const { getToken, getGid, getUid, getName, getManagerId } = authStore;
+  const { getToken, getName, getManagerId } = authStore;
 
   const axiosConfig = {
     baseURL: import.meta.env.VITE_API_SERVER_URL,

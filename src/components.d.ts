@@ -7,23 +7,13 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    AppFooter: typeof import('./components/AppFooter.vue')['default']
     ConfirmDialog: typeof import('./components/dialogs/ConfirmDialog.vue')['default']
-    copy: typeof import('./components/dialogs/SalesDialog copy.vue')['default']
-    Dashboard: typeof import('./components/Dashboard.vue')['default']
-    DatePicker: typeof import('./components/auth/DatePicker.vue')['default']
     ErrorDialog: typeof import('./components/dialogs/ErrorDialog.vue')['default']
-    HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     InfoDialog: typeof import('./components/dialogs/InfoDialog.vue')['default']
     LoadingDialog: typeof import('./components/dialogs/LoadingDialog.vue')['default']
-    LodingDialog: typeof import('./components/dialogs/LodingDialog.vue')['default']
-    ManagerSignIn: typeof import('./components/auth/ManagerSignIn.vue')['default']
-    NewSales: typeof import('./components/dialogs/NewSales.vue')['default']
-    NewSalesDialog: typeof import('./components/dialogs/NewSalesDialog.vue')['default']
     PurchaseDialog: typeof import('./components/dialogs/PurchaseDialog.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SalesDialog: typeof import('./components/dialogs/SalesDialog.vue')['default']
-    SignIn: typeof import('./components/auth/SignIn.vue')['default']
   }
 }

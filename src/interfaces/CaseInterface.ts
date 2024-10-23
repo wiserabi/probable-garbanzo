@@ -1,6 +1,6 @@
 export interface Case {
     case_seq: string,
-    managerId: string,
+    managerid: string,
     applicant: string,
     phone: string,
     casenum?: string,
@@ -12,5 +12,6 @@ export interface Case {
     inum?: string,
     email?: string,
     memo?: string,
+    business?: number
 }
   
